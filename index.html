@@ -16,9 +16,7 @@
             <div class="logo">ILUMINI<span>.</span></div>
             <ul>
                 <li><a href="#sobre">Sobre</a></li>
-                <li><a href="#beneficios">Benefícios</a></li>
                 <li><a href="#solucoes">Soluções</a></li>
-                <!-- BOTÃO QUE ABRE O FORMULÁRIO -->
                 <li><a href="javascript:void(0)" class="btn-contato" onclick="abrirModal()">Solicitar Orçamento</a></li>
             </ul>
         </nav>
@@ -26,58 +24,48 @@
 
     <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1>Sua própria usina de <br><span class="destaque">energia limpa.</span></h1>
-                <p>Reduza seus custos em até 95% e transforme a luz do sol em economia.</p>
-                <div class="hero-btns">
-                    <a href="javascript:void(0)" class="btn-main" onclick="abrirModal()">Começar Agora</a>
-                </div>
-            </div>
+            <h1>Energia que vem do <span class="destaque">Sol</span></h1>
+            <p>Economize até 95% na conta de luz com o projeto Ilumini.</p>
+            <a href="javascript:void(0)" class="btn-main" onclick="abrirModal()">Quero Economizar</a>
         </div>
     </section>
 
-    <!-- JANELA FLUTUANTE (MODAL) -->
+    <!-- JANELA DO FORMULÁRIO (MODAL) -->
     <div id="modalContato" class="modal">
         <div class="modal-content">
             <span class="fechar" onclick="fecharModal()">&times;</span>
             <h2>Solicitar Orçamento</h2>
-            <p>Deixe seu e-mail e nossa equipe entrará em contato.</p>
+            <p>Preencha os dados e receba a simulação no seu e-mail.</p>
             
-            <!-- FORMULÁRIO REAL -->
-            <form action="https://formspree.io/f/seu-email-aqui" method="POST">
-                <label>Seu melhor e-mail:</label>
-                <input type="email" name="email" placeholder="exemplo@email.com" required>
+            <!-- CONFIGURADO PARA O SEU E-MAIL -->
+            <form action="https://formspree.io/f/carlos-6836124@estudante.rs.gov.br" method="POST">
+                <label>Seu Nome:</label>
+                <input type="text" name="nome" placeholder="Seu nome completo" required>
+
+                <label>Seu E-mail:</label>
+                <input type="email" name="email" placeholder="seu@email.com" required>
                 
-                <label>Mensagem (Opcional):</label>
-                <textarea name="mensagem" placeholder="Como podemos ajudar?"></textarea>
+                <label>Gasto mensal de luz (R$):</label>
+                <input type="number" name="gasto_mensal" placeholder="Ex: 350" required>
                 
                 <button type="submit" class="btn-enviar">Enviar Pedido</button>
             </form>
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Ilumini Energia Solar - Projeto Escolar</p>
-        </div>
-    </footer>
-
-    <!-- SCRIPT PARA ABRIR E FECHAR O MODAL -->
+    <!-- SCRIPT PARA FUNCIONAMENTO -->
     <script>
-        function abrirModal() {
-            document.getElementById("modalContato").style.display = "flex";
+        function abrirModal() { 
+            document.getElementById("modalContato").style.display = "flex"; 
         }
-        function fecharModal() {
-            document.getElementById("modalContato").style.display = "none";
+        function fecharModal() { 
+            document.getElementById("modalContato").style.display = "none"; 
         }
-        // Fecha o modal se clicar fora da caixa branca
+        // Fecha se clicar fora da caixa branca
         window.onclick = function(event) {
             let modal = document.getElementById("modalContato");
-            if (event.target == modal) {
-                fecharModal();
-            }
+            if (event.target == modal) { fecharModal(); }
         }
     </script>
-
 </body>
 </html>
