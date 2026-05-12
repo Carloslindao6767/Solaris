@@ -1,0 +1,75 @@
+:root {
+    --azul-escuro: #003366;
+    --azul-claro: #0077b6;
+    --amarelo-brilhante: #ffcc00;
+    --amarelo-suave: #ffdd44;
+    --branco: #ffffff;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: var(--azul-escuro);
+}
+
+header {
+    background-color: var(--azul-escuro);
+    padding: 1rem;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.logo {
+    color: var(--amarelo-brilhante);
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--branco);
+    font-weight: bold;
+}
+
+.hero {
+    background: linear-gradient(rgba(0,51,102,0.8), rgba(0,51,102,0.8)), url('https://unsplash.com');
+    background-size: cover;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--branco);
+}
+
+.btn-primary {
+    background-color: var(--amarelo-brilhante);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 2px solid var(--amarelo-brilhante);
+    color: var(--amarelo-brilhante);
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}
