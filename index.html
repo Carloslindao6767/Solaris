@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilumini | Energia Solar do Futuro</title>
-    <!-- Fonte Google Poppins -->
+    <title>Ilumini | Energia Solar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +11,6 @@
 </head>
 <body>
 
-    <!-- Cabeçalho / Menu -->
     <header>
         <nav class="container">
             <div class="logo">ILUMINI<span>.</span></div>
@@ -20,94 +18,66 @@
                 <li><a href="#sobre">Sobre</a></li>
                 <li><a href="#beneficios">Benefícios</a></li>
                 <li><a href="#solucoes">Soluções</a></li>
-                <li><a href="#" class="btn-contato">Solicitar Orçamento</a></li>
+                <!-- BOTÃO QUE ABRE O FORMULÁRIO -->
+                <li><a href="javascript:void(0)" class="btn-contato" onclick="abrirModal()">Solicitar Orçamento</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Seção Principal (Hero) -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
                 <h1>Sua própria usina de <br><span class="destaque">energia limpa.</span></h1>
-                <p>Reduza seus custos em até 95% e transforme a luz do sol em economia para sua casa ou empresa.</p>
+                <p>Reduza seus custos em até 95% e transforme a luz do sol em economia.</p>
                 <div class="hero-btns">
-                    <a href="#solucoes" class="btn-main">Nossas Soluções</a>
-                    <a href="#sobre" class="btn-sub">Saiba Mais</a>
+                    <a href="javascript:void(0)" class="btn-main" onclick="abrirModal()">Começar Agora</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Seção Sobre / Números -->
-    <section id="sobre" class="sobre container">
-        <div class="sobre-grid">
-            <div class="texto-sobre">
-                <span class="label">Quem Somos</span>
-                <h2>Liderando a Transição Energética no Brasil</h2>
-                <p>A <strong>Ilumini</strong> é uma empresa focada em sustentabilidade e tecnologia. Nosso projeto escolar visa mostrar como o sol pode ser a principal fonte de energia para um mundo mais verde.</p>
+    <!-- JANELA FLUTUANTE (MODAL) -->
+    <div id="modalContato" class="modal">
+        <div class="modal-content">
+            <span class="fechar" onclick="fecharModal()">&times;</span>
+            <h2>Solicitar Orçamento</h2>
+            <p>Deixe seu e-mail e nossa equipe entrará em contato.</p>
+            
+            <!-- FORMULÁRIO REAL -->
+            <form action="https://formspree.io/f/seu-email-aqui" method="POST">
+                <label>Seu melhor e-mail:</label>
+                <input type="email" name="email" placeholder="exemplo@email.com" required>
                 
-                <div class="stats">
-                    <div class="stat-item">
-                        <strong>500+</strong>
-                        <p>Projetos</p>
-                    </div>
-                    <div class="stat-item">
-                        <strong>10t</strong>
-                        <p>CO₂ Evitados</p>
-                    </div>
-                    <div class="stat-item">
-                        <strong>R$ 0</strong>
-                        <p>Conta de Luz</p>
-                    </div>
-                </div>
-            </div>
-            <div class="imagem-sobre">
-                <!-- Imagem ilustrativa de painéis solares -->
-                <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=600" alt="Painéis Solares">
-            </div>
+                <label>Mensagem (Opcional):</label>
+                <textarea name="mensagem" placeholder="Como podemos ajudar?"></textarea>
+                
+                <button type="submit" class="btn-enviar">Enviar Pedido</button>
+            </form>
         </div>
-    </section>
+    </div>
 
-    <!-- Seção de Soluções (Cards) -->
-    <section id="solucoes" class="solucoes">
-        <div class="container">
-            <div class="header-secao">
-                <h2>O que oferecemos</h2>
-                <p>Tecnologia de ponta para todas as necessidades</p>
-            </div>
-
-            <div class="grid-solucoes">
-                <div class="card">
-                    <div class="icon">🏠</div>
-                    <h3>Residencial</h3>
-                    <p>Sistemas sob medida para levar economia para sua família.</p>
-                    <button class="btn-card">Ver detalhes</button>
-                </div>
-
-                <div class="card">
-                    <div class="icon">🏢</div>
-                    <h3>Empresarial</h3>
-                    <p>Aumente a margem de lucro da sua empresa reduzindo custos fixos.</p>
-                    <button class="btn-card">Ver detalhes</button>
-                </div>
-
-                <div class="card">
-                    <div class="icon">🔧</div>
-                    <h3>Manutenção</h3>
-                    <p>Suporte técnico especializado para garantir eficiência total.</p>
-                    <button class="btn-card">Ver detalhes</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rodapé -->
     <footer>
         <div class="container">
             <p>&copy; 2026 Ilumini Energia Solar - Projeto Escolar</p>
         </div>
     </footer>
+
+    <!-- SCRIPT PARA ABRIR E FECHAR O MODAL -->
+    <script>
+        function abrirModal() {
+            document.getElementById("modalContato").style.display = "flex";
+        }
+        function fecharModal() {
+            document.getElementById("modalContato").style.display = "none";
+        }
+        // Fecha o modal se clicar fora da caixa branca
+        window.onclick = function(event) {
+            let modal = document.getElementById("modalContato");
+            if (event.target == modal) {
+                fecharModal();
+            }
+        }
+    </script>
 
 </body>
 </html>
