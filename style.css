@@ -10,6 +10,14 @@ html {
     scroll-behavior: smooth;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Corta vazamentos horizontais de forma global */
+    width: 100%;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -26,6 +34,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 header {
@@ -35,6 +44,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100%;
 }
 
 nav {
@@ -88,6 +98,7 @@ nav a:hover {
     color: white;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .hero-content {
@@ -127,6 +138,7 @@ nav a:hover {
 .secao-solar, .secao-analise, .secao-simulador, .secao-equipe {
     padding: 80px 20px;
     text-align: center;
+    width: 100%;
 }
 
 .secao-solar h2, .secao-analise h2, .secao-simulador h2, .secao-equipe h2 {
@@ -163,7 +175,7 @@ nav a:hover {
 
 .grid-comparativo {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
     margin-bottom: 40px;
 }
@@ -249,7 +261,7 @@ nav a:hover {
 
 .grid-equipe {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 30px;
     max-width: 700px;
     margin: 0 auto;
@@ -328,24 +340,28 @@ footer {
     background: #011627;
     color: white;
     margin-top: 50px;
+    width: 100%;
 }
 
-/* 📱 REGRAS DE RESPONSIVIDADE PARA CELULAR */
+/* 📱 REGRAS DE RESPONSIVIDADE CORRIGIDAS PARA CELULAR */
 @media (max-width: 768px) {
     nav {
         flex-direction: column;
         gap: 15px;
         text-align: center;
+        width: 100%;
     }
 
     nav ul {
         flex-direction: column;
         gap: 12px;
         width: 100%;
+        padding: 0;
     }
 
     .btn-nav-link {
         width: 100%;
+        max-width: 280px;
         padding: 12px;
     }
 
@@ -355,15 +371,29 @@ footer {
     }
 
     .hero h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
+        padding: 0 10px;
     }
 
     .hero p {
         font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    .secao-solar, .secao-analise, .secao-simulador, .secao-equipe {
+        padding: 40px 10px;
     }
 
     .secao-solar h2, .secao-analise h2, .secao-simulador h2, .secao-equipe h2 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+    }
+
+    /* Força os blocos a quebrarem em linhas únicas limpas de forma nativa */
+    .grid-funcionamento,
+    .grid-comparativo,
+    .grid-equipe {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
     }
 
     .bloco-analise {
@@ -376,5 +406,6 @@ footer {
 
     .card-simulador {
         padding: 25px;
+        width: 100%;
     }
 }
