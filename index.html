@@ -137,7 +137,11 @@
             <h2>Solicitar Orçamento</h2>
             <p>Preencha os dados e receba a simulação no seu e-mail.</p>
             
-            <form id="meuFormulario">
+            <!-- Retorno ao método POST nativo com endpoint absoluto correto -->
+            <form action="formspree.io" method="POST">
+                <!-- Direciona para a página customizada após o envio bem-sucedido -->
+                <input type="hidden" name="_next" value="github.io">
+                
                 <label for="nome">Seu Nome:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
                 
@@ -147,7 +151,7 @@
                 <label for="gasto">Gasto mensal de luz (R$):</label>
                 <input type="number" id="gasto" name="gasto_mensal" placeholder="Ex: 350" required>
                 
-                <button type="submit" id="btnEnviarForm" class="btn-enviar">Enviar Pedido</button>
+                <button type="submit" class="btn-enviar">Enviar Pedido</button>
             </form>
         </div>
     </div>
@@ -181,41 +185,6 @@
             document.getElementById('res-economia-ano').innerText = `R$ ${economyAnual.toFixed(2).replace('.', ',')}`;
             document.getElementById('resultado-simulador').classList.remove('hidden');
         }
-
-        // AJUSTE CRÍTICO: ENDPOINT ABSOLUTO E REDIRECIONAMENTO COM JAVASCRIPT
-        document.getElementById("meuFormulario").addEventListener("submit", function(event) {
-            event.preventDefault(); 
-            
-            const botao = document.getElementById("btnEnviarForm");
-            botao.innerText = "Enviando...";
-            botao.disabled = true;
-
-            const dados = new FormData(this);
-
-            // Link absoluto definitivo do seu Formspree inserido no JavaScript
-            fetch("formspree.io", {
-                method: "POST",
-                body: dados,
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Limpa o formulário e leva você direto para a página obrigado.html do seu repositório Solaris
-                    this.reset();
-                    fecharModal();
-                    window.location.href = "github.io";
-                } else {
-                    alert("Erro ao processar dados. Confirme se as configurações do seu painel Formspree estão corretas.");
-                    botao.innerText = "Enviar Pedido";
-                    botao.disabled = false;
-                }
-            })
-            .catch(error => {
-                alert("Erro na conexão. Tente novamente.");
-                botao.innerText = "Enviar Pedido";
-                botao.disabled = false;
-            });
-        });
     </script>
 </body>
 </html>
