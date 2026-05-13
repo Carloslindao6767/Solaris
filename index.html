@@ -137,11 +137,8 @@
             <h2>Solicitar Orçamento</h2>
             <p>Preencha os dados e receba a simulação no seu e-mail.</p>
             
-            <!-- Link absoluto corrigido com HTTPS -->
-            <form action="formspree.io" method="POST">
-                <!-- Redirecionamento configurado com link absoluto seguro para o seu GitHub Pages -->
-                <input type="hidden" name="_next" value="github.io">
-                
+            <!-- Adicionado ID para manipulação via JS sem recarregar a página -->
+            <form id="meuFormulario">
                 <label for="nome">Seu Nome:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
                 
@@ -151,7 +148,7 @@
                 <label for="gasto">Gasto mensal de luz (R$):</label>
                 <input type="number" id="gasto" name="gasto_mensal" placeholder="Ex: 350" required>
                 
-                <button type="submit" class="btn-enviar">Enviar Pedido</button>
+                <button type="submit" id="btnEnviarForm" class="btn-enviar">Enviar Pedido</button>
             </form>
         </div>
     </div>
@@ -179,12 +176,45 @@
             }
             const novaConta = contaOriginal * 0.05; 
             const economiaMensal = contaOriginal - novaConta;
-            const economiaAnual = economiaMensal * 12;
+            const economyAnual = economiaMensal * 12;
 
             document.getElementById('res-nova-conta').innerText = `R$ ${novaConta.toFixed(2).replace('.', ',')}`;
-            document.getElementById('res-economia-ano').innerText = `R$ ${economiaAnual.toFixed(2).replace('.', ',')}`;
+            document.getElementById('res-economia-ano').innerText = `R$ ${economyAnual.toFixed(2).replace('.', ',')}`;
             document.getElementById('resultado-simulador').classList.remove('hidden');
         }
+
+        // LÓGICA AJAX AVANÇADA CONTRA ERROS 405
+        document.getElementById("meuFormulario").addEventListener("submit", function(event) {
+            event.preventDefault(); // Impede o redirecionamento do navegador
+            
+            const botao = document.getElementById("btnEnviarForm");
+            botao.innerText = "Enviando...";
+            botao.disabled = true;
+
+            const dados = new FormData(this);
+
+            fetch("formspree.io", {
+                method: "POST",
+                body: dados,
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("☀️ Pedido enviado com sucesso! Verifique seu Gmail.");
+                    this.reset();
+                    fecharModal();
+                } else {
+                    alert("Ocorreu um erro no servidor. Verifique se o reCAPTCHA está desativado no seu painel.");
+                }
+            })
+            .catch(error => {
+                alert("Erro de conexão. Tente novamente.");
+            })
+            .finally(() => {
+                botao.innerText = "Enviar Pedido";
+                botao.disabled = false;
+            });
+        });
     </script>
 </body>
 </html>
