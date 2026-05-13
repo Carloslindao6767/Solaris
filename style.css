@@ -6,7 +6,6 @@
     --branco: #ffffff;
 }
 
-/* Efeito Global de Rolagem Suave adicionado aqui */
 html {
     scroll-behavior: smooth;
 }
@@ -125,7 +124,6 @@ nav a:hover {
     font-size: 1rem;
 }
 
-/* Seções estruturais */
 .secao-solar, .secao-analise, .secao-simulador, .secao-equipe {
     padding: 80px 20px;
     text-align: center;
@@ -141,11 +139,10 @@ nav a:hover {
     max-width: 800px;
     margin: 0 auto 40px auto;
     font-size: 1.1rem;
-    color: #555;
+    color: #666;
     line-height: 1.6;
 }
 
-/* Grid de Funcionamento */
 .grid-funcionamento {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -164,7 +161,6 @@ nav a:hover {
     margin-bottom: 15px;
 }
 
-/* Grid Comparativo de Vantagens */
 .grid-comparativo {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -199,7 +195,6 @@ nav a:hover {
 
 .card-diferencial h3 { color: var(--amarelo); margin-bottom: 15px; }
 
-/* Estilização do Simulador */
 .card-simulador {
     background: white;
     padding: 40px;
@@ -250,11 +245,8 @@ nav a:hover {
     font-weight: bold;
 }
 
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
-/* Estilização da Seção da Equipe */
 .grid-equipe {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -283,12 +275,8 @@ nav a:hover {
     margin-bottom: 5px;
 }
 
-.cargo {
-    font-size: 0.9rem;
-    color: #666;
-}
+.cargo { font-size: 0.9rem; color: #666; }
 
-/* Modal e Footer */
 .modal {
     display: none;
     position: fixed;
