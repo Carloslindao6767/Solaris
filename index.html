@@ -4,67 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ilumini | Energia Solar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="googleapis.com">
+    <link rel="preconnect" href="gstatic.com" crossorigin>
+    <link href="googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header>
         <nav class="container">
             <div class="logo">ILUMINI<span>.</span></div>
             <ul>
-                <li><a href="#sobre">Sobre</a></li>
-                <li><a href="#solucoes">Soluções</a></li>
-                <li><a href="javascript:void(0)" class="btn-contato" onclick="abrirModal()">Solicitar Orçamento</a></li>
+                <li><a href="#sobre">Como Funciona</a></li>
+                <li><a href="#analise">Vantagens</a></li>
+                <li><a href="#simulador">Simulador</a></li>
+                <li><a href="#equipe">Nossa Equipe</a></li>
+                <li><button class="btn-nav-link" onclick="abrirModal()">Orçamento</button></li>
             </ul>
         </nav>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <h1>Energia que vem do <span class="destaque">Sol</span></h1>
-            <p>Economize até 95% na conta de luz com o projeto Ilumini.</p>
-            <a href="javascript:void(0)" class="btn-main" onclick="abrirModal()">Quero Economizar</a>
-        </div>
-    </section>
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <div class="container hero-content">
+                <h1>Energia que vem do <span class="destaque">Sol</span></h1>
+                <p>Economize até 95% na conta de luz com o projeto Ilumini.</p>
+                <button class="btn-main" onclick="abrirModal()">Quero Economizar</button>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 1: COMO FUNCIONA E É RENOVÁVEL? -->
+        <section id="sobre" class="container secao-solar">
+            <h2>O que é a Energia Solar?</h2>
+            <p class="subtitulo">A energia solar é uma fonte **100% renovável** e inesgotável, pois utiliza a radiação do sol para gerar eletricidade sem poluir o meio ambiente.</p>
+            
+            <div class="grid-funcionamento">
+                <div class="card-funcao">
+                    <h3>1. Captura da Luz</h3>
+                    <p>Os painéis fotovoltaicos instalados no telhado recebem os raios solares e os transformam em energia limpa (corrente contínua).</p>
+                </div>
+                <div class="card-funcao">
+                    <h3>2. Conversão</h3>
+                    <p>O aparelho chamado Inversor Solar converte essa energia para o formato correto das tomadas da sua casa (corrente alternada).</p>
+                </div>
+                <div class="card-funcao">
+                    <h3>3. Economia Real</h3>
+                    <p>Sua casa consome a energia do sol. O excesso gerado vai para a rede elétrica pública e gera créditos automáticos de compensação.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 2: VANTAGENS, DESVANTAGENS E DIFERENCIAL -->
+        <section id="analise" class="container secao-analise">
+            <h2>Por que escolher a ILUMINI?</h2>
+            
+            <div class="grid-comparativo">
+                <!-- Vantagens -->
+                <div class="bloco-analise vantagens">
+                    <h3>☀️ Vantagens</h3>
+                    <ul>
+                        <li>Redução imediata de até 95% na conta de energia residencial.</li>
+                        <li>Valorização do imóvel no mercado imobiliário.</li>
+                        <li>Longa vida útil dos equipamentos (mais de 25 anos).</li>
+                        <li>Energia limpa que não emite gases do efeito estufa.</li>
+                    </ul>
+                </div>
+
+                <!-- Desvantagens -->
+                <div class="bloco-analise desvantagens">
+                    <h3>🌧️ Desvantagens</h3>
+                    <ul>
+                        <li>Custo de investimento inicial considerado alto no Brasil.</li>
+                        <li>Dependência climática (produção cai em dias muito nublados).</li>
+                        <li>Não produz energia durante a noite (necessita de créditos).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diferencial Único -->
+            <div class="card-diferencial">
+                <h3>🚀 Nosso Diferencial Exclusivo</h3>
+                <p>Oferecemos o sistema de <strong>Parcelamento Inteligente Sem Entrada</strong>: a própria economia mensal da conta paga a parcela do financiamento. Além disso, incluímos <strong>Monitoramento via Aplicativo com IA</strong> que prevê anomalias no telhado.</p>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: SIMULADOR DE ECONOMIA INTERATIVO -->
+        <section id="simulador" class="container secao-simulador">
+            <h2>Simulador de Economia</h2>
+            <p class="subtitulo">Descubra quanto você pode poupar investindo na tecnologia da ILUMINI.</p>
+            
+            <div class="card-simulador">
+                <div class="input-group">
+                    <label for="conta-valor">Quanto você paga de luz por mês (R$)?</label>
+                    <input type="number" id="conta-valor" placeholder="Ex: 500" min="50">
+                    <button class="btn-calcular" onclick="calcularEconomia()">Calcular Ganho</button>
+                </div>
+                
+                <div id="resultado-simulador" class="resultado-container hidden">
+                    <div class="resultado-item">
+                        <span class="resultado-label">Sua nova conta estimada:</span>
+                        <span class="resultado-valor" id="res-nova-conta">R$ 0,00</span>
+                    </div>
+                    <div class="resultado-item destaque-ganho">
+                        <span class="resultado-label">Economia Anual Garantida:</span>
+                        <span class="resultado-valor" id="res-economia-ano">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 4: FOTOS FICTÍCIAS DA EQUIPE (PROJETO ESCOLAR) -->
+        <section id="equipe" class="container secao-equipe">
+            <h2>Nossa Equipe de Especialistas</h2>
+            <p class="subtitulo">Conheça os engenheiros e fundadores responsáveis pelos projetos da ILUMINI.</p>
+            
+            <div class="grid-equipe">
+                <div class="card-membro">
+                    <img src="https://freepik.com" alt="Carlos Silva" class="foto-membro">
+                    <h3>Carlos Silva</h3>
+                    <p class="cargo">Engenheiro Chefe Fotovoltaico</p>
+                </div>
+                <div class="card-membro">
+                    <img src="https://istockphoto.com" alt="Ana Costa" class="foto-membro">
+                    <h3>Ana Costa</h3>
+                    <p class="cargo">Diretora de Sustentabilidade</p>
+                </div>
+                <div class="card-membro">
+                    <img src="https://freepik.com" alt="Bruno Santos" class="foto-membro">
+                    <h3>Bruno Santos</h3>
+                    <p class="cargo">Especialista em Redes Elétricas</p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- JANELA DO FORMULÁRIO (MODAL) -->
     <div id="modalContato" class="modal">
         <div class="modal-content">
-            <span class="fechar" onclick="fecharModal()">&times;</span>
+            <button class="fechar" onclick="fecharModal()">&times;</button>
             <h2>Solicitar Orçamento</h2>
             <p>Preencha os dados e receba a simulação no seu e-mail.</p>
             
-            <!-- CONFIGURADO PARA O SEU E-MAIL -->
-            <form action="https://formspree.io/f/carlos-6836124@estudante.rs.gov.br" method="POST">
-                <label>Seu Nome:</label>
-                <input type="text" name="nome" placeholder="Seu nome completo" required>
-
-                <label>Seu E-mail:</label>
-                <input type="email" name="email" placeholder="seu@email.com" required>
+            <form action="formspree.io" method="POST">
+                <label for="nome">Seu Nome:</label>
+                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
                 
-                <label>Gasto mensal de luz (R$):</label>
-                <input type="number" name="gasto_mensal" placeholder="Ex: 350" required>
+                <label for="email">Seu E-mail:</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                
+                <label for="gasto">Gasto mensal de luz (R$):</label>
+                <input type="number" id="gasto" name="gasto_mensal" placeholder="Ex: 350" required>
                 
                 <button type="submit" class="btn-enviar">Enviar Pedido</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT PARA FUNCIONAMENTO -->
+    <footer>
+        <p>&copy; 2026 Ilumini Energia Solar. Projeto Escolar - Todos os direitos fictícios reservados.</p>
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT: MODAL E SIMULADOR -->
     <script>
-        function abrirModal() { 
-            document.getElementById("modalContato").style.display = "flex"; 
+        function abrirModal() {
+            document.getElementById("modalContato").style.display = "flex";
         }
-        function fecharModal() { 
-            document.getElementById("modalContato").style.display = "none"; 
+        
+        function fecharModal() {
+            document.getElementById("modalContato").style.display = "none";
         }
-        // Fecha se clicar fora da caixa branca
+        
         window.onclick = function(event) {
             let modal = document.getElementById("modalContato");
-            if (event.target == modal) { fecharModal(); }
+            if (event.target == modal) {
+                fecharModal();
+            }
+        }
+
+        // Função do Simulador de Economia
+        function calcularEconomia() {
+            const contaOriginal = parseFloat(document.getElementById('conta-valor').value);
+            
+            if (isNaN(contaOriginal) || contaOriginal <= 0) {
+                alert('Por favor, insira um valor válido de conta mensal.');
+                return;
+            }
+
+            // Economia padrão de até 95%
+            const novaConta = contaOriginal * 0.05; 
+            const economiaMensal = contaOriginal - novaConta;
+            const economiaAnual = economiaMensal * 12;
+
+            document.getElementById('res-nova-conta').innerText = `R$ ${novaConta.toFixed(2)}`;
+            document.getElementById('res-economia-ano').innerText = `R$ ${economiaAnual.toFixed(2)}`;
+            
+            // Revela a div de resultado removendo a classe hidden
+            document.getElementById('resultado-simulador').classList.remove('hidden');
         }
     </script>
 </body>
