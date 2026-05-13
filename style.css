@@ -1,5 +1,3 @@
-/* ... (Todo o CSS anterior continua igual) ... */
-
 :root {
     --gradiente-azul: linear-gradient(135deg, #003366 0%, #00509d 100%);
     --gradiente-sol: linear-gradient(135deg, #ffcc00 0%, #ffae00 100%);
@@ -8,34 +6,298 @@
     --branco: #ffffff;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Poppins', sans-serif; background: #f8fafc; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+/* Efeito Global de Rolagem Suave adicionado aqui */
+html {
+    scroll-behavior: smooth;
+}
 
-header { background: white; padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-nav { display: flex; justify-content: space-between; align-items: center; }
-.logo { font-size: 1.8rem; font-weight: 800; }
-.logo span { color: var(--amarelo); }
-nav ul { display: flex; list-style: none; gap: 25px; }
-nav a { text-decoration: none; color: var(--azul-dark); font-weight: 500; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-.btn-contato { background: var(--gradiente-azul); color: white !important; padding: 10px 20px; border-radius: 50px; cursor: pointer; }
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f8fafc;
+    color: #333;
+}
 
-.hero { height: 80vh; background: var(--gradiente-azul); color: white; display: flex; align-items: center; text-align: center; }
-.hero h1 { font-size: 3rem; width: 100%; }
-.destaque { color: var(--amarelo); }
-.btn-main { background: var(--gradiente-sol); padding: 15px 30px; border-radius: 10px; text-decoration: none; color: var(--azul-dark); font-weight: bold; margin-top: 20px; display: inline-block; }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-/* === ESTILOS DO MODAL (NOVIDADE) === */
+header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--azul-dark);
+}
+
+.logo span {
+    color: var(--amarelo);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--azul-dark);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: #00509d;
+}
+
+.btn-nav-link {
+    background: var(--gradiente-azul);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    font-weight: 500;
+}
+
+.hero {
+    height: 80vh;
+    background: var(--gradiente-azul);
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.destaque {
+    color: var(--amarelo);
+}
+
+.btn-main {
+    background: var(--gradiente-sol);
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: none;
+    color: var(--azul-dark);
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Seções estruturais */
+.secao-solar, .secao-analise, .secao-simulador, .secao-equipe {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.secao-solar h2, .secao-analise h2, .secao-simulador h2, .secao-equipe h2 {
+    font-size: 2.2rem;
+    color: var(--azul-dark);
+    margin-bottom: 15px;
+}
+
+.subtitulo {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Grid de Funcionamento */
+.grid-funcionamento {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.card-funcao {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.card-funcao h3 {
+    color: #00509d;
+    margin-bottom: 15px;
+}
+
+/* Grid Comparativo de Vantagens */
+.grid-comparativo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.bloco-analise {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.bloco-analise h3 { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
+.vantagens h3 { color: #2e7d32; }
+.desvantagens h3 { color: #c62828; }
+.bloco-analise ul { list-style: none; }
+.bloco-analise li { margin-bottom: 12px; padding-left: 20px; position: relative; }
+.bloco-analise li::before { content: "•"; position: absolute; left: 0; font-weight: bold; }
+.vantagens li::before { color: #2e7d32; }
+.desvantagens li::before { color: #c62828; }
+
+.card-diferencial {
+    background: var(--gradiente-azul);
+    color: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: left;
+}
+
+.card-diferencial h3 { color: var(--amarelo); margin-bottom: 15px; }
+
+/* Estilização do Simulador */
+.card-simulador {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-calcular {
+    background: var(--gradiente-sol);
+    color: var(--azul-dark);
+    font-weight: bold;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.resultado-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.resultado-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+}
+
+.destaque-ganho {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Estilização da Seção da Equipe */
+.grid-equipe {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.card-membro {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.foto-membro {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 4px solid #00509d;
+}
+
+.card-membro h3 {
+    color: var(--azul-dark);
+    font-size: 1.25rem;
+    margin-bottom: 5px;
+}
+
+.cargo {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Modal e Footer */
 .modal {
-    display: none; /* Escondido por padrão */
+    display: none;
     position: fixed;
     z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.6); /* Fundo escuro atrás */
+    background-color: rgba(0,0,0,0.6);
     backdrop-filter: blur(5px);
     justify-content: center;
     align-items: center;
@@ -48,12 +310,6 @@ nav a { text-decoration: none; color: var(--azul-dark); font-weight: 500; }
     width: 90%;
     max-width: 450px;
     position: relative;
-    animation: surgir 0.3s ease-out;
-}
-
-@keyframes surgir {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
 }
 
 .fechar {
@@ -62,23 +318,13 @@ nav a { text-decoration: none; color: var(--azul-dark); font-weight: 500; }
     top: 15px;
     font-size: 28px;
     cursor: pointer;
-    color: #999;
+    background: none;
+    border: none;
 }
 
-.modal h2 { margin-bottom: 10px; color: var(--azul-dark); }
-.modal p { font-size: 0.9rem; color: #666; margin-bottom: 25px; }
-
-/* Estilo do Formulário */
 form { display: flex; flex-direction: column; text-align: left; }
 label { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
-input, textarea {
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-family: inherit;
-}
-textarea { height: 100px; resize: none; }
+input { padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
 
 .btn-enviar {
     background: var(--gradiente-azul);
@@ -88,9 +334,12 @@ textarea { height: 100px; resize: none; }
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-.btn-enviar:hover { opacity: 0.9; transform: translateY(-2px); }
-
-footer { padding: 30px; text-align: center; background: #eee; margin-top: 50px; }
+footer {
+    padding: 30px;
+    text-align: center;
+    background: #011627;
+    color: white;
+    margin-top: 50px;
+}
