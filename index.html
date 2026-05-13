@@ -137,7 +137,6 @@
             <h2>Solicitar Orçamento</h2>
             <p>Preencha os dados e receba a simulação no seu e-mail.</p>
             
-            <!-- Adicionado ID para manipulação via JS sem recarregar a página -->
             <form id="meuFormulario">
                 <label for="nome">Seu Nome:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
@@ -183,9 +182,9 @@
             document.getElementById('resultado-simulador').classList.remove('hidden');
         }
 
-        // LÓGICA AJAX AVANÇADA CONTRA ERROS 405
+        // AJUSTE CRÍTICO: ENDPOINT ABSOLUTO E REDIRECIONAMENTO COM JAVASCRIPT
         document.getElementById("meuFormulario").addEventListener("submit", function(event) {
-            event.preventDefault(); // Impede o redirecionamento do navegador
+            event.preventDefault(); 
             
             const botao = document.getElementById("btnEnviarForm");
             botao.innerText = "Enviando...";
@@ -193,6 +192,7 @@
 
             const dados = new FormData(this);
 
+            // Link absoluto definitivo do seu Formspree inserido no JavaScript
             fetch("formspree.io", {
                 method: "POST",
                 body: dados,
@@ -200,17 +200,18 @@
             })
             .then(response => {
                 if (response.ok) {
-                    alert("☀️ Pedido enviado com sucesso! Verifique seu Gmail.");
+                    // Limpa o formulário e leva você direto para a página obrigado.html do seu repositório Solaris
                     this.reset();
                     fecharModal();
+                    window.location.href = "github.io";
                 } else {
-                    alert("Ocorreu um erro no servidor. Verifique se o reCAPTCHA está desativado no seu painel.");
+                    alert("Erro ao processar dados. Confirme se as configurações do seu painel Formspree estão corretas.");
+                    botao.innerText = "Enviar Pedido";
+                    botao.disabled = false;
                 }
             })
             .catch(error => {
-                alert("Erro de conexão. Tente novamente.");
-            })
-            .finally(() => {
+                alert("Erro na conexão. Tente novamente.");
                 botao.innerText = "Enviar Pedido";
                 botao.disabled = false;
             });
