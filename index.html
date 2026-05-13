@@ -33,10 +33,10 @@
             </div>
         </section>
 
-        <!-- SEÇÃO 1: COMO FUNCIONA E É RENOVÁVEL? -->
+        <!-- SEÇÃO 1: FUNCIONAMENTO -->
         <section id="sobre" class="container secao-solar">
             <h2>O que é a Energia Solar?</h2>
-            <p class="subtitulo">A energia solar é uma fonte **100% renovável** e inesgotável, pois utiliza a radiação do sol para gerar eletricidade sem poluir o meio ambiente.</p>
+            <p class="subtitulo">A energia solar é uma fonte <strong>100% renovável</strong> e inesgotável, pois utiliza a radiação do sol para gerar eletricidade sem poluir o meio ambiente.</p>
             
             <div class="grid-funcionamento">
                 <div class="card-funcao">
@@ -54,12 +54,11 @@
             </div>
         </section>
 
-        <!-- SEÇÃO 2: VANTAGENS, DESVANTAGENS E DIFERENCIAL -->
+        <!-- SEÇÃO 2: VANTAGENS E DIFERENCIAL -->
         <section id="analise" class="container secao-analise">
             <h2>Por que escolher a ILUMINI?</h2>
             
             <div class="grid-comparativo">
-                <!-- Vantagens -->
                 <div class="bloco-analise vantagens">
                     <h3>☀️ Vantagens</h3>
                     <ul>
@@ -70,7 +69,6 @@
                     </ul>
                 </div>
 
-                <!-- Desvantagens -->
                 <div class="bloco-analise desvantagens">
                     <h3>🌧️ Desvantagens</h3>
                     <ul>
@@ -81,14 +79,13 @@
                 </div>
             </div>
 
-            <!-- Diferencial Único -->
             <div class="card-diferencial">
                 <h3>🚀 Nosso Diferencial Exclusivo</h3>
                 <p>Oferecemos o sistema de <strong>Parcelamento Inteligente Sem Entrada</strong>: a própria economia mensal da conta paga a parcela do financiamento. Além disso, incluímos <strong>Monitoramento via Aplicativo com IA</strong> que prevê anomalias no telhado.</p>
             </div>
         </section>
 
-        <!-- SEÇÃO 3: SIMULADOR DE ECONOMIA INTERATIVO -->
+        <!-- SEÇÃO 3: SIMULADOR -->
         <section id="simulador" class="container secao-simulador">
             <h2>Simulador de Economia</h2>
             <p class="subtitulo">Descubra quanto você pode poupar investindo na tecnologia da ILUMINI.</p>
@@ -113,24 +110,24 @@
             </div>
         </section>
 
-        <!-- SEÇÃO 4: FOTOS FICTÍCIAS DA EQUIPE (PROJETO ESCOLAR) -->
+        <!-- SEÇÃO 4: EQUIPE -->
         <section id="equipe" class="container secao-equipe">
             <h2>Nossa Equipe de Especialistas</h2>
             <p class="subtitulo">Conheça os engenheiros e fundadores responsáveis pelos projetos da ILUMINI.</p>
             
             <div class="grid-equipe">
                 <div class="card-membro">
-                    <img src="https://freepik.com" alt="Carlos Silva" class="foto-membro">
-                    <h3>Carlos Silva</h3>
-                    <p class="cargo">Engenheiro Chefe Fotovoltaico</p>
-                </div>
-                <div class="card-membro">
-                    <img src="https://istockphoto.com" alt="Ana Costa" class="foto-membro">
+                    <img src="unsplash.com" alt="Ana Costa" class="foto-membro">
                     <h3>Ana Costa</h3>
                     <p class="cargo">Diretora de Sustentabilidade</p>
                 </div>
                 <div class="card-membro">
-                    <img src="https://freepik.com" alt="Bruno Santos" class="foto-membro">
+                    <img src="unsplash.com" alt="Carlos Silva" class="foto-membro">
+                    <h3>Carlos Silva</h3>
+                    <p class="cargo">Engenheiro Chefe Fotovoltaico</p>
+                </div>
+                <div class="card-membro">
+                    <img src="unsplash.com" alt="Bruno Santos" class="foto-membro">
                     <h3>Bruno Santos</h3>
                     <p class="cargo">Especialista em Redes Elétricas</p>
                 </div>
@@ -138,7 +135,7 @@
         </section>
     </main>
 
-    <!-- JANELA DO FORMULÁRIO (MODAL) -->
+    <!-- MODAL DO FORMULÁRIO -->
     <div id="modalContato" class="modal">
         <div class="modal-content">
             <button class="fechar" onclick="fecharModal()">&times;</button>
@@ -146,6 +143,9 @@
             <p>Preencha os dados e receba a simulação no seu e-mail.</p>
             
             <form action="formspree.io" method="POST">
+                <!-- IMPORTANTE: Substitua 'seu-usuario-github' pelo seu nome real do repositório no link abaixo -->
+                <input type="hidden" name="_next" value="github.io">
+                
                 <label for="nome">Seu Nome:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
                 
@@ -164,41 +164,29 @@
         <p>&copy; 2026 Ilumini Energia Solar. Projeto Escolar - Todos os direitos fictícios reservados.</p>
     </footer>
 
-    <!-- LOGICA JAVASCRIPT: MODAL E SIMULADOR -->
     <script>
         function abrirModal() {
             document.getElementById("modalContato").style.display = "flex";
         }
-        
         function fecharModal() {
             document.getElementById("modalContato").style.display = "none";
         }
-        
         window.onclick = function(event) {
             let modal = document.getElementById("modalContato");
-            if (event.target == modal) {
-                fecharModal();
-            }
+            if (event.target == modal) { fecharModal(); }
         }
-
-        // Função do Simulador de Economia
         function calcularEconomia() {
             const contaOriginal = parseFloat(document.getElementById('conta-valor').value);
-            
             if (isNaN(contaOriginal) || contaOriginal <= 0) {
                 alert('Por favor, insira um valor válido de conta mensal.');
                 return;
             }
-
-            // Economia padrão de até 95%
             const novaConta = contaOriginal * 0.05; 
             const economiaMensal = contaOriginal - novaConta;
             const economiaAnual = economiaMensal * 12;
 
-            document.getElementById('res-nova-conta').innerText = `R$ ${novaConta.toFixed(2)}`;
-            document.getElementById('res-economia-ano').innerText = `R$ ${economiaAnual.toFixed(2)}`;
-            
-            // Revela a div de resultado removendo a classe hidden
+            document.getElementById('res-nova-conta').innerText = `R$ ${novaConta.toFixed(2).replace('.', ',')}`;
+            document.getElementById('res-economia-ano').innerText = `R$ ${economiaAnual.toFixed(2).replace('.', ',')}`;
             document.getElementById('resultado-simulador').classList.remove('hidden');
         }
     </script>
