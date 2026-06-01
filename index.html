@@ -3,522 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEGIS-90 // GLOBAL DEFENSE NETWORK</title>
+    <title>Clash Royale Pro Edition</title>
     <style>
-        :root {
-            --glow-color: #00ff66;
-            --alert-color: #ff003c;
-            --bg-color: #020804;
-            --panel-bg: rgba(2, 14, 6, 0.65);
-            --border-color: rgba(0, 255, 102, 0.25);
-            --text-color: #88ffaa;
-            --font-family: 'Courier New', Courier, monospace;
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; background: #1a1a1a; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; color: white; }
+        #arena { 
+            position: relative; width: 360px; height: 460px; background-color: #4caf50;
+            background-image: linear-gradient(45deg, #43a047 25%, transparent 25%), linear-gradient(-45deg, #43a047 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #43a047 75%), linear-gradient(-45deg, transparent 75%, #43a047 75%);
+            background-size: 30px 30px; background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+            border: 4px solid #333; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
-
-        body, html {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-family);
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* Linhas CRT/Scanlines */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 99999;
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-        }
-
-        /* --- LOADING SCREEN --- */
-        #loading-screen {
-            position: fixed;
-            top:0; left:0; width:100vw; height:100vh;
-            background: #000;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.8s ease;
-        }
-        .matrix-loader {
-            width: 300px;
-            height: 4px;
-            background: rgba(0,255,102,0.1);
-            border: 1px solid var(--glow-color);
-            position: relative;
-            margin-top: 20px;
-            box-shadow: 0 0 10px var(--border-color);
-        }
-        .matrix-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--glow-color);
-            box-shadow: 0 0 15px var(--glow-color);
-            animation: load 3s forwards cubic-bezier(0.1, 0.8, 0.2, 1);
-        }
-        @keyframes load {
-            0% { width: 0%; }
-            20% { width: 25%; }
-            50% { width: 60%; }
-            80% { width: 85%; }
-            100% { width: 100%; }
-        }
-
-        /* --- LOGIN TERMINAL --- */
-        #login-screen {
-            position: fixed;
-            top:0; left:0; width:100vw; height:100vh;
-            background: rgba(1, 6, 2, 0.95);
-            z-index: 9999;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            transition: opacity 0.5s ease;
-        }
-        .login-box {
-            background: var(--panel-bg);
-            border: 2px solid var(--glow-color);
-            padding: 40px;
-            width: 90%;
-            max-width: 450px;
-            box-shadow: 0 0 30px rgba(0,255,102,0.15);
-            text-align: center;
-        }
-        .login-box h2 {
-            margin-bottom: 20px;
-            letter-spacing: 4px;
-            text-shadow: 0 0 8px var(--glow-color);
-        }
-        .login-input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            font-family: var(--font-family);
-            margin-bottom: 15px;
-            outline: none;
-            text-align: center;
-        }
-        .login-input:focus {
-            border-color: var(--glow-color);
-            box-shadow: 0 0 10px rgba(0,255,102,0.3);
-        }
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid var(--glow-color);
-            color: var(--glow-color);
-            font-family: var(--font-family);
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        .login-btn:hover {
-            background: var(--glow-color);
-            color: #000;
-            box-shadow: 0 0 15px var(--glow-color);
-        }
-
-        /* --- HUD HEADER --- */
-        .hud-header {
-            height: 60px;
-            background: rgba(1, 10, 4, 0.8);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            z-index: 100;
-            position: relative;
-        }
-        .hud-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-shadow: 0 0 10px var(--glow-color);
-            letter-spacing: 2px;
-        }
-        .system-status {
-            display: flex;
-            gap: 20px;
-            font-size: 0.85rem;
-            align-items: center;
-        }
-        .blink {
-            animation: blinker 1s linear infinite;
-        }
-        .text-alert {
-            color: var(--alert-color);
-            text-shadow: 0 0 10px var(--alert-color);
-        }
-        @keyframes blinker {
-            50% { opacity: 0; }
-        }
-
-        /* --- GRID LAYOUT --- */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 320px 1fr 350px;
-            grid-template-rows: calc(100vh - 60px);
-            gap: 15px;
-            padding: 15px;
-            width: 100%;
-            height: calc(100vh - 60px);
-        }
-
-        .panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(5px);
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 0 15px rgba(0,255,102,0.05);
-        }
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
-        }
-        .panel-header {
-            background: rgba(0, 255, 102, 0.08);
-            padding: 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .panel-body {
-            padding: 12px;
-            flex: 1;
-            overflow-y: auto;
-            font-size: 0.8rem;
-        }
-
-        .left-col, .right-col {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            border-bottom: 1px dashed rgba(0,255,102,0.1);
-            padding-bottom: 4px;
-        }
-        .progress-bar-container {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color);
-            height: 12px;
-            width: 100%;
-            margin-top: 4px;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--glow-color);
-            box-shadow: 0 0 8px var(--glow-color);
-            width: 75%;
-        }
-
-        /* Câmeras */
-        .cam-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            height: 140px;
-        }
-        .cam-feed {
-            background: #051108;
-            border: 1px solid rgba(0,255,102,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .cam-feed::after {
-            content: "REC";
-            position: absolute;
-            top: 5px; left: 5px;
-            font-size: 0.6rem;
-            color: var(--alert-color);
-            font-weight: bold;
-            animation: blinker 1s infinite;
-        }
-        .cam-static {
-            width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.5), rgba(0,0,0,0.5) 2px, rgba(0,255,102,0.1) 2px, rgba(0,255,102,0.1) 4px);
-            animation: staticShift 0.2s infinite;
-        }
-        @keyframes staticShift {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 4px; }
-        }
-        .cam-label {
-            position: absolute; bottom: 3px; right: 5px; font-size: 0.55rem; opacity: 0.7;
-        }
-
-        /* Centro e Mapa */
-        .center-col {
-            display: grid;
-            grid-template-rows: 1fr 180px;
-            gap: 15px;
-        }
-        .map-panel {
-            position: relative;
-            background: radial-gradient(circle, #041a0c 0%, #010603 100%);
-        }
-        .map-svg-container {
-            width: 100%; height: 100%;
-            opacity: 0.45;
-            position: absolute; top:0; left:0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .hologram-grid {
-            position: absolute;
-            width: 100%; height: 100%;
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(0, 255, 102, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 255, 102, 0.04) 1px, transparent 1px);
-        }
-        .map-blip {
-            position: absolute;
-            width: 10px; height: 10px;
-            background: var(--alert-color);
-            border-radius: 50%;
-            box-shadow: 0 0 12px var(--alert-color);
-            cursor: pointer;
-        }
-        .map-blip::before {
-            content: ''; position: absolute;
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border: 1px solid var(--alert-color); border-radius: 50%;
-            animation: pulse 1.8s infinite ease-out;
-        }
-        @keyframes pulse {
-            0% { transform: scale(0.3); opacity: 1; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-
-        .drone-orbit {
-            position: absolute;
-            border: 1px dashed rgba(0,255,102,0.4);
-            border-radius: 50%;
-            animation: spin 20s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Terminal */
-        .terminal-body {
-            background: #000;
-            font-family: monospace;
-            color: #33ff33;
-            overflow-y: auto;
-            font-size: 0.75rem;
-            line-height: 1.3;
-        }
-        .terminal-input-line {
-            display: flex;
-            background: #000;
-            padding: 5px;
-            border-top: 1px solid var(--border-color);
-        }
-        .terminal-prompt { color: var(--glow-color); margin-right: 5px;}
-        .fake-input {
-            background: transparent; border: none; color: #fff; outline: none; flex: 1; font-family: monospace;
-        }
-
-        /* Radar */
-        .radar-box {
-            width: 100%; height: 180px;
-            background: radial-gradient(circle, #021408 0%, #000 100%);
-            border: 1px solid var(--border-color);
-            position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .radar-sweep {
-            position: absolute;
-            width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, rgba(0, 255, 102, 0.4) 0deg, transparent 90deg, transparent 360deg);
-            animation: radar-sweep-anim 4s linear infinite;
-            transform-origin: center;
-            z-index: 2;
-        }
-        .radar-circle {
-            border: 1px solid rgba(0,255,102,0.15);
-            border-radius: 50%;
-            position: absolute;
-        }
-        @keyframes radar-sweep-anim {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .alert-item {
-            background: rgba(255, 0, 60, 0.08);
-            border-left: 3px solid var(--alert-color);
-            padding: 8px;
-            margin-bottom: 8px;
-            font-size: 0.75rem;
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from { transform: translateX(50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .sound-toggle {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--glow-color);
-            padding: 5px 10px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .sound-toggle.active {
-            background: var(--glow-color);
-            color: #000;
-            box-shadow: 0 0 10px var(--glow-color);
-        }
-
-        @media(max-width: 1024px) {
-            .grid-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto;
-                overflow-y: auto;
-                height: auto;
-            }
-            body { overflow-y: auto; }
-            .center-col { grid-template-rows: 400px 200px; }
-            .cam-grid { height: auto; }
-        }
+        #river { position: absolute; top: 215px; left: 0; width: 100%; height: 30px; background: #2196f3; display: flex; justify-content: space-around; z-index: 2; }
+        .bridge { width: 50px; height: 100%; background: #9e9e9e; border-left: 2px solid #555; border-right: 2px solid #555; }
+        .tower { position: absolute; width: 44px; height: 44px; border-radius: 6px; border: 3px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; text-shadow: 1px 1px #000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 3; line-height: 1.1; }
+        .king-tower { width: 56px; height: 56px; border-radius: 50%; font-size: 11px; }
+        .blue-team { background: #03a9f4; border-color: #b3e5fc; }
+        .red-team { background: #f44336; border-color: #ffcdd2; }
+        .troop { position: absolute; width: 24px; height: 24px; border-radius: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 13px; z-index: 5; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+        .troop.blue-team { background: #0288d1; }
+        .troop.red-team { background: #d32f2f; }
+        .building { position: absolute; width: 34px; height: 34px; border-radius: 4px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 4; border: 2px dashed white; }
+        #ui { width: 360px; background: #2d2d2d; padding: 10px; border-radius: 0 0 8px 8px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        #elixir-bar-container { width: 100%; height: 14px; background: #444; border-radius: 7px; overflow: hidden; border: 1px solid #555; }
+        #elixir-bar { width: 0%; height: 100%; background: #e91e63; transition: width 0.2s linear; }
+        #elixir-text { font-size: 13px; font-weight: bold; text-align: center; color: #ff69b4; text-shadow: 1px 1px #000; }
+        #deck { display: flex; justify-content: space-between; gap: 3px; }
+        .card { background: #3a3a3a; border: 2px solid #555; padding: 5px 1px; border-radius: 6px; cursor: pointer; text-align: center; font-size: 9px; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; font-weight: bold; }
+        .card .card-img { font-size: 16px; }
+        .card.active { border-color: #e91e63; background: #555; transform: scale(1.04); }
     </style>
 </head>
 <body>
-
-    <div id="loading-screen">
-        <h1 style="letter-spacing: 6px; text-shadow: 0 0 15px var(--glow-color);">AEGIS CORE OS v90.42</h1>
-        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">ESTABELECENDO CONEXÃO ULTRA SECRETA VIA SATÉLITE QUANTICO...</p>
-        <div class="matrix-loader">
-            <div class="matrix-bar"></div>
-        </div>
-        <div id="load-status" style="font-size:0.7rem; margin-top:10px; color:var(--glow-color);">INITIALIZING SYSTEM...</div>
+    <h3 style="margin: 5px 0; letter-spacing: 1px;">CLASH ROYALE PRO</h3>
+    <div id="arena">
+        <div id="river"><div class="bridge"></div><div class="bridge"></div></div>
+        <div class="tower red-team king-tower" id="tower-red-king" style="top: 8px; left: 152px;">👑<br>3000</div>
+        <div class="tower red-team" id="tower-red-left" style="top: 38px; left: 54px;">♜<br>1500</div>
+        <div class="tower red-team" id="tower-red-right" style="top: 38px; left: 262px;">♜<br>1500</div>
+        <div class="tower blue-team king-tower" id="tower-blue-king" style="bottom: 8px; left: 152px;">👑<br>3000</div>
+        <div class="tower blue-team" id="tower-blue-left" style="bottom: 38px; left: 54px;">♜<br>1500</div>
+        <div class="tower blue-team" id="tower-blue-right" style="bottom: 38px; left: 262px;">♜<br>1500</div>
     </div>
-
-    <div id="login-screen">
-        <div class="login-box">
-            <h2>ACESSO RESTRITO</h2>
-            <p style="font-size:0.7rem; color:var(--alert-color); margin-bottom:20px;" class="blink">APENAS PARA O ALTO COMANDO MILITAR</p>
-            <input type="text" class="login-input" placeholder="ID DE OPERADOR" value="COMMANDER_ALPHA">
-            <input type="password" class="login-input" placeholder="CHAVE CRIPTOGRAFADA" value="••••••••">
-            <button class="login-btn" onclick="bypassLogin()">DECRIPTOGRAFAR E ENTRAR</button>
-        </div>
+    <div id="ui">
+        <div id="elixir-text">Elixir: 0 / 10</div>
+        <div id="elixir-bar-container"><div id="elixir-bar"></div></div>
+        <div id="deck"></div>
     </div>
-
-    <header class="hud-header">
-        <div class="hud-title">AEGIS // GLOBAL WAR ROOM</div>
-        <div class="system-status">
-            <div>DEFCON: <span class="text-alert blink" style="font-weight:bold;">1</span></div>
-            <div>STATUS: <span style="color:var(--glow-color);">OPERACIONAL</span></div>
-            <div>NÍVEL DE AMEAÇA: <span class="text-alert">MÁXIMO</span></div>
-            <button class="sound-toggle" id="audioBtn" onclick="toggleAudio()">AUDIO: OFF</button>
-        </div>
-    </header>
-
-    <div class="grid-container">
+    <script>
+        const arena = document.getElementById('arena');
+        let elixir = 0, selectedCard = null, selectedCost = 0, selectedSlot = null, tropas = [], construcoes = [];
         
-        <div class="left-col">
-            <div class="panel">
-                <div class="panel-header">MATRIZ DE ENERGIA GLOBAL <span>[ESTÁVEL]</span></div>
-                <div class="panel-body">
-                    <div class="stat-row"><span>REATOR DE FUSÃO 01</span><span style="color:var(--glow-color)">94.2%</span></div>
-                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 94%"></div></div>
-                    <div class="stat-row" style="margin-top:10px;"><span>REATOR DE FUSÃO 02</span><span style="color:var(--glow-color)">88.7%</span></div>
-                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 88%"></div></div>
-                    <div class="stat-row" style="margin-top:10px;"><span>REDE ORBITAL ION</span><span class="text-alert blink">FLUTUANTE</span></div>
-                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 41%; background:var(--alert-color);"></div></div>
-                </div>
-            </div>
+        const tDados = {
+            'red-king': {id: 'red-king', x: 180, y: 36, hp: 3000, maxHp: 3000, team: 'red', type:'tower', isKing: true, ativo: false, dmg: 85, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-red-king')},
+            'red-left': {id: 'red-left', x: 76, y: 60, hp: 1500, maxHp: 1500, team: 'red', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-red-left')},
+            'red-right': {id: 'red-right', x: 284, y: 60, hp: 1500, maxHp: 1500, team: 'red', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-red-right')},
+            'blue-king': {id: 'blue-king', x: 180, y: 424, hp: 3000, maxHp: 3000, team: 'blue', type:'tower', isKing: true, ativo: false, dmg: 85, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-blue-king')},
+            'blue-left': {id: 'blue-left', x: 76, y: 400, hp: 1500, maxHp: 1500, team: 'blue', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-blue-left')},
+            'blue-right': {id: 'blue-right', x: 284, y: 400, hp: 1500, maxHp: 1500, team: 'blue', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-blue-right')}
+        };
 
-            <div class="panel">
-                <div class="panel-header">MONITORAMENTO DE SATÉLITES <span>[12 ATIVOS]</span></div>
-                <div class="panel-body" id="sat-list"></div>
-            </div>
+        const todasCartas = [
+            { id: 'larrys', nome: 'Larrys', custo: 1, img: '💀' },
+            { id: 'skelton_army', nome: 'Exército', custo: 3, img: '☠️' },
+            { id: 'tornado', nome: 'Tornado', custo: 3, img: '🌪️' },
+            { id: 'knight', nome: 'Cavaleiro', custo: 3, img: '⚔️' },
+            { id: 'mini_pekka', nome: 'M. PEKKA', custo: 4, img: '🥞' },
+            { id: 'fireball', nome: 'Fogo', custo: 4, img: '🔥' },
+            { id: 'hog', nome: 'Corredor', custo: 4, img: '🐷' },
+            { id: 'giant', nome: 'Gigante', custo: 5, img: '🛡️' }
+        ];
+        let maoCartas = [];
 
-            <div class="panel">
-                <div class="panel-header">CÂMERAS DE SEGURANÇA RESTRITAS <span>[LIVE FEED]</span></div>
-                <div class="panel-body cam-grid">
-                    <div class="cam-feed"><div class="cam-static"></div><div class="cam-label">BUNKER_01</div></div>
-                    <div class="cam-feed"><div class="cam-static"></div><div class="cam-label">SILO_X7</div></div>
-                    <div class="cam-feed"><div class="cam-static"></div><div class="cam-label">PENTAGON_S3</div></div>
-                    <div class="cam-feed"><div class="cam-static"></div><div class="cam-label">ORBIT_ION_CAM</div></div>
-                </div>
-            </div>
-        </div>
+        function inicializarMao() {
+            let embaralhado = [...todasCartas].sort(() => 0.5 - Math.random());
+            maoCartas = embaralhado.slice(0, 4);
+            renderizarDeck();
+        }
+        function renderizarDeck() {
+            const deckDiv = document.getElementById('deck'); deckDiv.innerHTML = '';
+            maoCartas.forEach((carta, index) => {
+                const cardEl = document.createElement('div'); cardEl.className = 'card';
+                cardEl.onclick = () => selectCard(carta, index, cardEl);
+                cardEl.innerHTML = `<span class="card-img">${carta.img}</span>${carta.nome}<br>💧${carta.custo}`;
+                deckDiv.appendChild(cardEl);
+            });
+        }
+        setInterval(() => {
+            if (elixir < 10) {
+                elixir += 1;
+                document.getElementById('elixir-bar').style.width = (elixir * 10) + '%';
+                document.getElementById('elixir-text').innerText = `Elixir: ${elixir} / 10`;
+            }
+        }, 900);
+        function selectCard(carta, slotIndex, element) {
+            if (elixir < carta.custo) return;
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            selectedCard = carta.id; selectedCost = carta.custo; selectedSlot = slotIndex; element.classList.add('active');
+        }
+        function rotacionarCarta(slot) {
+            let cartasForaDaMao = todasCartas.filter(c => !maoCartas.includes(c));
+            maoCartas[slot] = cartasForaDaMao[Math.floor(Math.random() * cartasForaDaMao.length)];
+            renderizarDeck();
+        }
+        arena.addEventListener('click', (e) => {
+            if (!selectedCard || elixir < selectedCost) return;
+            const rect = arena.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+            if (selectedCard !== 'fireball' && selectedCard !== 'tornado' && y < 230) return;
 
-        <div class="center-col">
-            <div class="panel map-panel">
-                <div class="panel-header">MAPA DE SOBERANIA MUNDIAL QUANTICA // PROJEÇÃO INTERATIVA</div>
-                <div class="hologram-grid"></div>
-                
-                <div class="map-svg-container">
-                    <svg viewBox="0 0 1000 500" width="100%" height="100%">
-                        <path d="M150,150 L200,130 L250,160 L300,120 L380,180 L400,250 L350,320 L280,350 L250,420 L200,450 L180,380 L120,300 Z" fill="none" stroke="rgba(0,255,102,0.3)" stroke-width="1.5" />
-                        <path d="M450,120 L520,100 L600,110 L680,80 L750,120 L850,150 L900,220 L820,300 L700,350 L580,320 L500,250 Z" fill="none" stroke="rgba(0,255,102,0.3)" stroke-width="1.5" />
-                        <circle cx="500" cy="250" r="180" fill="none" stroke="rgba(0,255,102,0.05)" stroke-dasharray="5,5"/>
-                    </svg>
-                </div>
+            if (selectedCard === 'fireball') { executarBolaDeFogo(x, y); }
+            else if (selectedCard === 'tornado') { executarTornado(x, y); }
+            else if (selectedCard === 'larrys') {
+                for(let i=0; i<3; i++) criarTropa('larrys', x + (i*12 - 12), y + (Math.random()*10 - 5), 'blue');
+            }
+            else if (selectedCard === 'skelton_army') {
+                for(let i=0; i<11; i++) {
+                    let ox = (i % 4) * 10 - 15, oy = Math.floor(i / 4) * 10 - 15;
+                    criarTropa('larrys', x + ox, y + oy, 'blue');
+                }
+            } else { criarTropa(selectedCard, x, y, 'blue'); }
+            
+            elixir -= selectedCost; selectedCard = null; rotacionarCarta(selectedSlot);
+        });
 
-                <div class="drone-orbit" style="width: 160px; height: 160px; top: 20%; left: 35%;"></div>
-                <div class="drone-orbit" style="width: 220px; height: 220px; top: 40%; left: 15%; animation-duration: 35s;"></div>
+        function executarBolaDeFogo(targetX, targetY) {
+            const fx = document.createElement('div');
+            fx.style.position = 'absolute'; fx.style.width = '60px'; fx.style.height = '60px';
+            fx.style.background = 'radial-gradient(circle, #ff5722 20%, transparent 70%)';
+            fx.style.left = targetX + 'px'; fx.style.top = targetY + 'px'; fx.style.transform = 'translate(-50%, -50%)'; fx.style.zIndex = '10';
+            arena.appendChild(fx); setTimeout(() => { fx.remove(); }, 400);
+            
+            tropas.forEach(t => { if (t.team === 'red' && Math.hypot(t.x - targetX, t.y - targetY) < 45) t.hp -= 150; });
+            for (let k in tDados) {
+                let tor = tDados[k];
+                if (tor.team === 'red' && Math.hypot(tor.x - targetX, tor.y - targetY) < 45) {
+                    tor.hp -= 100; tor.el.innerHTML = (tor.isKing?"👑":"♜")+"<br>"+Math.max(0, Math.floor(tor.hp));
+                    if(tor.isKing) tor.ativo = true; if(tor.hp <= 0) verificarDestruicaoTorre(tor);
+                }
+            }
+        }
 
-                <div class="map-blip" style="top: 30%; left: 25%;" onclick="triggerThreat('Setor Alfa Oeste', 'Movimentação Anômala de Tropas')"></div>
-                <div class="map-blip" style="top: 55%; left: 65%;" onclick="triggerThreat('Quadrante Pacífico S-5', 'Atividade Subaquática Não Identificada')"></div>
-                <div class="map-blip" style="top: 22%; left: 78%;" onclick="triggerThreat('Silo Continental Norte', 'Flutuação Térmica de Ogivas')"></div>
-            </div>
+        function executarTornado(targetX, targetY) {
+            const tnd = document.createElement('div');
+            tnd.style.position = 'absolute'; tnd.style.width = '90px'; tnd.style.height = '90px';
+            tnd.style.background = 'radial-gradient(circle, rgba(173,216,230,0.5) 10%, transparent 60%)';
+            tnd.style.border = '2px dashed rgba(255,255,255,0.3)'; tnd.style.borderRadius = '50%';
+            tnd.style.left = targetX + 'px'; tnd.style.top = targetY + 'px'; tnd.style.transform = 'translate(-50%, -50%)'; tnd.style.zIndex = '9';
+            arena.appendChild(tnd);
 
-            <div class="panel">
-                <div class="panel-header">TERMINAL TÁTICO QUANTICO // CONTROL SHELL</div>
-                <div class="panel-body terminal-body" id="term-output">
-                    <div>[SISTEMA INICIALIZADO] Digite 'help' ou 'override code' para comandos de emergência.</div>
-                </div>
-                <div class="terminal-input-line">
-                    <span class="terminal-prompt">AEGIS_ROOT#</span>
-                    <input type="text" class="fake-input" id="term-input" onkeydown="handleTerminal(event)" placeholder="Inserir comando de criptografia...">
-                </div>
-            </div>
-        </div>
+            let duracao = 20;
+            let intervaloTornado = setInterval(() => {
+                tropas.forEach(t => {
+                    if (t.team === 'red') {
+                        let dist = Math.hypot(t.x - targetX, t.y - targetY);
+                        if (dist < 55) {
+                            let angle = Math.atan2(targetY - t.y, targetX - t.x);
+                            t.x += Math.cos(angle) * 3.5; t.y += Math.sin(angle) * 3.5; t.hp -= 1.5;
+                        }
+                    }
+                });
+                duracao--; if(duracao <= 0) { clearInterval(intervaloTornado); tnd.remove(); }
+            }, 100);
+        }
 
-        <div class="right-col">
-            <div class="panel">
-                <div class="panel-header">RADAR DE VARREDURA DE INTERCEPTAÇÃO</div>
-                <div class="radar-box">
-                    <div class="radar-sweep"></div>
-                    <div class="radar-circle" style="width:50px; height:50px;"></div>
-                    <div class="radar-circle" style="width:100px; height:100px;"></div>
-                    <div class="radar-circle" style="width:150px; height:150px;"></div>
-     
+        function criarTropa(type, x, y, team) {
+            const htmlEl = document.createElement('div'); htmlEl.className = `troop ${team}-team`;
+            htmlEl.style.left = x + 'px'; htmlEl.style.top = y + 'px';
+            
+            // Atributos +30% de vida e sistema de Velocidade de Ataque (hitSpeed em milissegundos)
+            let hp = 50, dmg = 15, speed = 2, range = 15, targetType = 'any', movimento = 'ground', hitSpeed = 2000;
+            
+            if(type === 'larrys') { hp = 13; dmg = 8; speed = 2.4; range = 15; hitSpeed = 1000; htmlEl.innerText = '💀'; }
+            if(type === 'knight') { hp = 110; dmg = 25; speed = 1.6; range = 15; hitSpeed = 1500; htmlEl.innerText = '⚔️'; }
+            if(type === 'mini_pekka') { hp = 135; dmg = 400; speed = 1.4; range = 15; hitSpeed = 3000; htmlEl.innerText = '🥞'; }
+            if(type === 'hog') { hp = 143; dmg = 110; speed = 3.2; range = 15; targetType = 'tower'; movimento = 'jump'; hitSpeed = 1800; htmlEl.innerText = '🐷'; }
+            if(type === 'giant') { hp = 312; dmg = 200; speed = 0.9; range = 15; targetType = 'tower'; hitSpeed = 3500; htmlEl.innerText = '🛡️'; }
+
+            arena.appendChild(htmlEl);
+            tropas.push({ x, y, team, type, hp, dmg, speed, range, targetType, movimento, hitSpeed, lastHit: 0, el: htmlEl });
+        }
+
+        setInterval(() => {
+            const tipos = ['knight', 'giant', 'hog', 'larrys', 'mini_pekka', 'skelton_army'];
+            let t = tipos[Math.floor(Math.random() * tipos.length)];
+            let rx = Math.random() * 240 + 60;
+            if(t === 'larrys') {
+                for(let i=0; i<3; i++) criarTropa('larrys', rx + (i*10), Math.random() * 40 + 40, 'red');
+            } else if(t === 'skelton_army') {
+                for(let i=0; i<11; i++) criarTropa('larrys', rx + (i%4)*8, Math.random() * 40 + 40 + Math.floor(i/4)*8, 'red');
+            } else { criarTropa(t, rx, Math.random() * 40 + 40, 'red'); }
+        }, 4200);
+
+        function verificarDestruicaoTorre(alvo) {
+            alvo.el.style.background = '#555';
+            if(alvo.isKing) { alert(alvo.team === 'red' ? "🏆 VITÓRIA REAL!" : "GAME OVER!"); location.reload(); }
+        }
+
+        // Loop de Combate e Atualização em Tempo Real
+        setInterval(() => {
+            let agora = Date.now();
+
+            // Disparo Controlado das Torres (Cada 2 segundos)
+            for (let k in tDados) {
+                let tor = tDados[k];
+                if (tor.hp > 0 && tor.ativo && (agora - tor.lastHit >= tor.hitSpeed)) {
+                    let alvoTorre = null, menorDist = tor.range;
+                    tropas.forEach(t => {
+                        if (t.team !== tor.team && t.hp > 0) {
+                            let d = Math.hypot(t.x - tor.x, t.y - tor.y);
+                            if (d < menorDist) { menorDist = d; alvoTorre = t; }
+                        }
+                    });
+                    if (alvoTorre) { alvoTorre.hp -= tor.dmg; tor.lastHit = agora; }
+                }
+            }
+
+            // Movimentação e Cadência de Ataque das Tropas
+            tropas.forEach((tropa) => {
+                if (tropa.hp <= 0) return;
+                let alvo = null, menorDistancia = 9999, alvosPossiveis = [];
+
+                for (let k in tDados) { if (tDados[k].team !== tropa.team && tDados[k].hp > 0) alvosPossiveis.push(tDados[k]); }
+                if (tropa.targetType !== 'tower') { tropas.forEach(t => { if(t.team !== tropa.team && t.hp > 0) alvosPossiveis.push(t); }); }
+
+                alvosPossiveis.forEach(a => {
+                    let d = Math.hypot(a.x - tropa.x, a.y - tropa.y);
+                    if (d < menorDistancia) { menorDistancia = d; alvo = a; }
+                });
+
+                if (alvo) {
+                    if (menorDistancia <= tropa.range) {
+                        // Ataque baseado no Cooldown individual de cada carta
+                        if (agora - tropa.lastHit >= tropa.hitSpeed) {
+                            alvo.hp -= tropa.dmg; tropa.lastHit = agora;
+                            if(alvo.type === 'tower') {
+                                alvo.el.innerHTML = (alvo.isKing?"👑":"♜")+"<br>"+Math.max(0, Math.floor(alvo.hp));
+                                if (alvo.isKing) { alvo.ativo = true; }
+                                if (alvo.hp <= 0) verificarDestruicaoTorre(alvo);
+                            }
+                        }
+                    } else {
+                        let destX = alvo.x, destY = alvo.y;
+                        if (tropa.movimento === 'ground') {
+                            let cruzouRio = (tropa.team === 'blue' && tropa.y < 215) || (tropa.team === 'red' && tropa.y > 245);
+                            if (!cruzouRio && Math.abs(tropa.y - 230) < 60) {
+                                destX = tropa.x < 180 ? 90 : 270; destY = tropa.team === 'blue' ? 200 : 260;
+                            }
+                        }
+                        let angle = Math.atan2(destY - tropa.y, destX - tropa.x);
+                        tropa.x += Math.cos(angle) * tropa.speed; tropa.y += Math.sin(angle) * tropa.speed;
+                        tropa.el.style.left = tropa.x + 'px'; tropa.el.style.top = tropa.y + 'px';
+                    }
+                }
+            });
+            tropas.forEach(t => { if(t.hp <= 0) t.el.remove(); });
+            tropas = tropas.filter(t => t.hp > 0);
+        }, 100);
+        inicializarMao();
+    </script>
+</body>
+</html>
