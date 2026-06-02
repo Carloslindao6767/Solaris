@@ -4,29 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash Royale Pro Edition</title>
-    <!-- Vincula o arquivo de estilos externo -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h3 class="game-title">CLASH ROYALE PRO</h3>
+    <h3 class="game-title">CLASH ROYALE <span class="neon-text">PRO</span></h3>
     
     <div id="arena">
         <div id="river">
             <div class="bridge"></div>
             <div class="bridge"></div>
         </div>
-        <!-- Torres do Time Vermelho (Inimigo) -->
+        <!-- Torres Vermelhas -->
         <div class="tower red-team king-tower" id="tower-red-king" style="top: 8px; left: 152px;">👑<br>3000</div>
         <div class="tower red-team" id="tower-red-left" style="top: 38px; left: 54px;">♜<br>1500</div>
         <div class="tower red-team" id="tower-red-right" style="top: 38px; left: 262px;">♜<br>1500</div>
         
-        <!-- Torres do Time Azul (Jogador) -->
+        <!-- Torres Azuis -->
         <div class="tower blue-team king-tower" id="tower-blue-king" style="bottom: 8px; left: 152px;">👑<br>3000</div>
         <div class="tower blue-team" id="tower-blue-left" style="bottom: 38px; left: 54px;">♜<br>1500</div>
         <div class="tower blue-team" id="tower-blue-right" style="bottom: 38px; left: 262px;">♜<br>1500</div>
     </div>
     
-    <!-- Interface de Usuário (Painel de Elixir e Deck) -->
     <div id="ui">
         <div id="elixir-text">Elixir: 0 / 10</div>
         <div id="elixir-bar-container">
@@ -35,7 +33,6 @@
         <div id="deck"></div>
     </div>
 
-    <!-- Vincula o arquivo de lógica externa -->
     <script src="script.js"></script>
 </body>
 </html>
