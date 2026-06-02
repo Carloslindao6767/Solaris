@@ -1,7 +1,7 @@
 const arena = document.getElementById('arena');
-let elixir = 0, selectedCard = null, selectedCost = 0, selectedSlot = null, tropas = [], construcoes = [];
+let elixir = 0, selectedCard = null, selectedCost = 0, selectedSlot = null;
+let tropas = [], campeaoEmCampo = false;
 
-// Cache de elementos da UI para otimização de performance
 const elixirBar = document.getElementById('elixir-bar');
 const elixirText = document.getElementById('elixir-text');
 
@@ -15,14 +15,20 @@ const tDados = {
 };
 
 const todasCartas = [
-    { id: 'larrys', nome: 'Larrys', custo: 1, img: '💀' },
-    { id: 'skelton_army', nome: 'Exército', custo: 3, img: '☠️' },
-    { id: 'tornado', nome: 'Tornado', custo: 3, img: '🌪️' },
-    { id: 'knight', nome: 'Cavaleiro', custo: 3, img: '⚔️' },
-    { id: 'mini_pekka', nome: 'M. PEKKA', custo: 4, img: '🥞' },
-    { id: 'fireball', nome: 'Fogo', custo: 4, img: '🔥' },
-    { id: 'hog', nome: 'Corredor', custo: 4, img: '🐷' },
-    { id: 'giant', nome: 'Gigante', custo: 5, img: '🛡️' }
+    // 1. TROPAS (Foco Dinâmico: Construção vs Qualquer Alvo)
+    { id: 'giant', nome: 'Gigante', custo: 5, img: '🛡️', cat: 'tropa' },
+    { id: 'hog', nome: 'Corredor', custo: 4, img: '🐷', cat: 'tropa' },
+    { id: 'balloon', nome: 'Balão', custo: 5, img: '🎈', cat: 'tropa' },
+    { id: 'royal_giant', nome: 'G. Real', custo: 6, img: '🧔', cat: 'tropa' },
+    { id: 'knight', nome: 'Cavaleiro', custo: 3, img: '⚔️', cat: 'tropa' },
+    // 2. FEITIÇOS (Uso Instantâneo no Clique)
+    { id: 'fireball', nome: 'Fogo', custo: 4, img: '🔥', cat: 'feitico' },
+    { id: 'poison', nome: 'Veneno', custo: 4, img: '🧪', cat: 'feitico' },
+    { id: 'graveyard', nome: 'Cemitério', custo: 5, img: '🪦', cat: 'feitico' },
+    // 3. CONSTRUÇÕES (Estáticas no Campo)
+    { id: 'tesla', nome: 'Tesla', custo: 4, img: '⚡', cat: 'construcao' },
+    // 4. CAMPEÕES (Apenas 1 por vez no campo)
+    { id: 'golden_knight', nome: 'C. Dourado', custo: 4, img: '👑', cat: 'campeao' }
 ];
 let maoCartas = [];
 
@@ -37,14 +43,13 @@ function renderizarDeck() {
     deckDiv.innerHTML = '';
     maoCartas.forEach((carta, index) => {
         const cardEl = document.createElement('div'); 
-        cardEl.className = 'card';
+        cardEl.className = `card cat-${carta.cat}`;
         cardEl.onclick = () => selectCard(carta, index, cardEl);
         cardEl.innerHTML = `<span class="card-img">${carta.img}</span>${carta.nome}<br>💧${carta.custo}`;
         deckDiv.appendChild(cardEl);
     });
 }
 
-// Geração de Elixir Passiva do Jogador
 setInterval(() => {
     if (elixir < 10) {
         elixir += 1;
@@ -55,8 +60,9 @@ setInterval(() => {
 
 function selectCard(carta, slotIndex, element) {
     if (elixir < carta.custo) return;
+    if (carta.cat === 'campeao' && campeaoEmCampo) return; // Bloqueia invocação múltipla do Campeão
     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-    selectedCard = carta.id; 
+    selectedCard = carta; 
     selectedCost = carta.custo; 
     selectedSlot = slotIndex; 
     element.classList.add('active');
@@ -64,33 +70,25 @@ function selectCard(carta, slotIndex, element) {
 
 function rotacionarCarta(slot) {
     let cartasForaDaMao = todasCartas.filter(c => !maoCartas.some(m => m.id === c.id));
+    // Impede o Campeão de reentrar na rotação se ele já estiver vivo no mapa
+    if (campeaoEmCampo) cartasForaDaMao = cartasForaDaMao.filter(c => c.cat !== 'campeao');
     let novaCarta = cartasForaDaMao[Math.floor(Math.random() * cartasForaDaMao.length)];
     maoCartas[slot] = novaCarta;
     renderizarDeck();
 }
 
-// Evento de Invocação por Clique na Arena
 arena.addEventListener('click', (e) => {
     if (!selectedCard || elixir < selectedCost) return;
     const rect = arena.getBoundingClientRect();
     const x = e.clientX - rect.left, y = e.clientY - rect.top;
     
-    // Impede tropas terrestres de nascerem no campo inimigo
-    if (selectedCard !== 'fireball' && selectedCard !== 'tornado' && y < 230) return;
+    if (selectedCard.cat !== 'feitico' && y < 230) return; // Linha do rio
 
-    if (selectedCard === 'fireball') { 
-        executarBolaDeFogo(x, y); 
-    } else if (selectedCard === 'tornado') { 
-        executarTornado(x, y); 
-    } else if (selectedCard === 'larrys') {
-        for(let i=0; i<3; i++) criarTropa('larrys', x + (i*12 - 12), y + (Math.random()*10 - 5), 'blue');
-    } else if (selectedCard === 'skelton_army') {
-        for(let i=0; i<11; i++) {
-            let ox = (i % 4) * 10 - 15, oy = Math.floor(i / 4) * 10 - 15;
-            criarTropa('larrys', x + ox, y + oy, 'blue');
-        }
-    } else { 
-        criarTropa(selectedCard, x, y, 'blue'); 
+    if (selectedCard.cat === 'feitico') {
+        executarFeitico(selectedCard.id, x, y);
+    } else {
+        if (selectedCard.cat === 'campeao') campeaoEmCampo = true;
+        criarEntidade(selectedCard.id, x, y, 'blue', selectedCard.cat);
     }
     
     elixir -= selectedCost; 
@@ -100,97 +98,82 @@ arena.addEventListener('click', (e) => {
     rotacionarCarta(selectedSlot);
 });
 
-function executarBolaDeFogo(targetX, targetY) {
+function executarFeitico(id, targetX, targetY) {
     const fx = document.createElement('div');
-    fx.style.position = 'absolute'; fx.style.width = '60px'; fx.style.height = '60px';
-    fx.style.background = 'radial-gradient(circle, #ff5722 20%, transparent 70%)';
-    fx.style.left = targetX + 'px'; fx.style.top = targetY + 'px'; fx.style.transform = 'translate(-50%, -50%)'; fx.style.zIndex = '10';
-    arena.appendChild(fx); 
-    setTimeout(() => { fx.remove(); }, 400);
+    fx.style.position = 'absolute'; fx.style.transform = 'translate(-50%, -50%)'; fx.style.left = targetX + 'px'; fx.style.top = targetY + 'px'; fx.style.zIndex = '10'; fx.style.borderRadius = '50%';
     
-    tropas.forEach(t => { if (t.team === 'red' && Math.hypot(t.x - targetX, t.y - targetY) < 45) t.hp -= 150; });
+    if (id === 'fireball') {
+        fx.style.width = '70px'; fx.style.height = '70px'; fx.style.background = 'radial-gradient(circle, #ff5722 20%, transparent 70%)';
+        arena.appendChild(fx); setTimeout(() => fx.remove(), 400);
+        aplicarDanoArea(targetX, targetY, 45, 150, 100);
+    } 
+    else if (id === 'poison') {
+        fx.style.width = '90px'; fx.style.height = '90px'; fx.style.background = 'radial-gradient(circle, rgba(156,39,176,0.4) 30%, transparent 70%)'; fx.style.border = '1px solid #9c27b0';
+        arena.appendChild(fx);
+        let ticks = 6;
+        let pInterval = setInterval(() => {
+            aplicarDanoArea(targetX, targetY, 55, 30, 15);
+            ticks--; if(ticks <= 0) { clearInterval(pInterval); fx.remove(); }
+        }, 800);
+    } 
+    else if (id === 'graveyard') {
+        fx.style.width = '100px'; fx.style.height = '100px'; fx.style.border = '2px dashed rgba(255,255,255,0.2)';
+        arena.appendChild(fx);
+        let esqGerados = 0;
+        let gInterval = setInterval(() => {
+            let sx = targetX + (Math.random() * 60 - 30), sy = targetY + (Math.random() * 60 - 30);
+            criarEntidade('larrys', sx, sy, 'blue', 'tropa');
+            esqGerados++; if(esqGerados >= 10) { clearInterval(gInterval); fx.remove(); }
+        }, 500);
+    }
+}
+
+function aplicarDanoArea(tx, ty, raio, dmgTropas, dmgTorres) {
+    tropas.forEach(t => { if (t.team === 'red' && Math.hypot(t.x - tx, t.y - ty) < raio) t.hp -= dmgTropas; });
     for (let k in tDados) {
         let tor = tDados[k];
-        if (tor.team === 'red' && Math.hypot(tor.x - targetX, tor.y - targetY) < 45) {
-            tor.hp -= 100; 
+        if (tor.team === 'red' && Math.hypot(tor.x - tx, tor.y - ty) < raio) {
+            tor.hp -= dmgTorres;
             tor.el.innerHTML = (tor.isKing ? "👑" : "♜") + "<br>" + Math.max(0, Math.floor(tor.hp));
-            if(tor.isKing) tor.ativo = true; 
-            if(tor.hp <= 0) verificarDestruicaoTorre(tor);
-        }
-    }
-}
-
-function executarTornado(targetX, targetY) {
-    const tnd = document.createElement('div');
-    tnd.style.position = 'absolute'; tnd.style.width = '90px'; tnd.style.height = '90px';
-    tnd.style.background = 'radial-gradient(circle, rgba(173,216,230,0.5) 10%, transparent 60%)';
-    tnd.style.border = '2px dashed rgba(255,255,255,0.3)'; tnd.style.borderRadius = '50%';
-    tnd.style.left = targetX + 'px'; tnd.style.top = targetY + 'px'; tnd.style.transform = 'translate(-50%, -50%)'; tnd.style.zIndex = '9';
-    arena.appendChild(tnd);
-
-    let duracao = 20;
-    let intervaloTornado = setInterval(() => {
-        tropas.forEach(t => {
-            if (t.team === 'red') {
-                let dist = Math.hypot(t.x - targetX, t.y - targetY);
-                if (dist < 55) {
-                    let angle = Math.atan2(targetY - t.y, targetX - t.x);
-                    t.x += Math.cos(angle) * 3.5; 
-                    t.y += Math.sin(angle) * 3.5; 
-                    t.hp -= 1.5;
-                }
-            }
-        });
-        duracao--; 
-        if(duracao <= 0) { clearInterval(intervaloTornado); tnd.remove(); }
-    }, 100);
-}
-
-function criarTropa(type, x, y, team) {
-    const htmlEl = document.createElement('div'); 
-    htmlEl.className = `troop ${team}-team`;
-    htmlEl.style.left = x + 'px'; 
-    htmlEl.style.top = y + 'px';
+            if(tor.isKing) tor.ativo = true;
+            if(tor.hp <div class="hp-bar"></div></div>`;
+    const label = document.createElement('span');
+    htmlEl.appendChild(label);
     
-    let hp = 50, dmg = 15, speed = 2, range = 15, targetType = 'any', movimento = 'ground', hitSpeed = 2000;
+    let hp = 100, maxHp = 100, dmg = 20, speed = 1.5, range = 15, targetType = 'any', hitSpeed = 1500;
     
-    if(type === 'larrys') { hp = 13; dmg = 8; speed = 2.4; range = 15; hitSpeed = 1000; htmlEl.innerText = '💀'; }
-    if(type === 'knight') { hp = 110; dmg = 25; speed = 1.6; range = 15; hitSpeed = 1500; htmlEl.innerText = '⚔️'; }
-    if(type === 'mini_pekka') { hp = 135; dmg = 400; speed = 1.4; range = 15; hitSpeed = 3000; htmlEl.innerText = '🥞'; }
-    if(type === 'hog') { hp = 143; dmg = 110; speed = 3.2; range = 15; targetType = 'tower'; movimento = 'jump'; hitSpeed = 1800; htmlEl.innerText = '🐷'; }
-    if(type === 'giant') { hp = 312; dmg = 200; speed = 0.9; range = 15; targetType = 'tower'; hitSpeed = 3500; htmlEl.innerText = '🛡️'; }
+    if(type === 'larrys') { hp = 15; dmg = 10; speed = 2.4; label.innerText = '💀'; }
+    else if(type === 'knight') { hp = 130; dmg = 28; speed = 1.6; label.innerText = '⚔️'; }
+    else if(type === 'giant') { hp = 350; dmg = 45; speed = 0.8; targetType = 'tower'; label.innerText = '🛡️'; }
+    else if(type === 'hog') { hp = 180; dmg = 60; speed = 3.0; targetType = 'tower'; label.innerText = '🐷'; }
+    else if(type === 'balloon') { hp = 140; dmg = 180; speed = 1.2; targetType = 'tower'; hitSpeed = 3000; label.innerText = '🎈'; }
+    else if(type === 'royal_giant') { hp = 290; dmg = 35; speed = 0.9; range = 65; targetType = 'tower'; label.innerText = '🧔'; }
+    else if(type === 'tesla') { hp = 200; dmg = 30; speed = 0; range = 45; label.innerText = '⚡'; }
+    else if(type === 'golden_knight') { hp = 250; dmg = 40; speed = 1.8; label.innerText = '👑'; } // Campeão
 
+    maxHp = hp;
+    tropas.push({ x, y, team, type, cat, hp, maxHp, dmg, speed, range, targetType, hitSpeed, lastHit: 0, el: htmlEl });
     arena.appendChild(htmlEl);
-    tropas.push({ x, y, team, type, hp, dmg, speed, range, targetType, movimento, hitSpeed, lastHit: 0, el: htmlEl });
 }
 
-// Invocação de Tropas Inimigas do Bot (Vermelho)
+// Spawn automático do Robô Inimigo
 setInterval(() => {
-    const tipos = ['knight', 'giant', 'hog', 'larrys', 'mini_pekka', 'skelton_army'];
-    let t = tipos[Math.floor(Math.random() * tipos.length)];
+    const pools = ['knight', 'giant', 'hog', 'balloon', 'royal_giant'];
+    let tipoSorteado = pools[Math.floor(Math.random() * pools.length)];
     let rx = Math.random() * 240 + 60;
-    if(t === 'larrys') {
-        for(let i=0; i<3; i++) criarTropa('larrys', rx + (i*10), Math.random() * 40 + 40, 'red');
-    } else if(t === 'skelton_army') {
-        for(let i=0; i<11; i++) criarTropa('larrys', rx + (i%4)*8, Math.random() * 40 + 40 + Math.floor(i/4)*8, 'red');
-    } else { 
-        criarTropa(t, rx, Math.random() * 40 + 40, 'red'); 
-    }
-}, 4200);
+    criarEntidade(tipoSorteado, rx, 40, 'red', 'tropa');
+}, 5000);
 
 function verificarDestruicaoTorre(alvo) {
-    alvo.el.style.background = '#555';
-    if(alvo.isKing) { 
-        alert(alvo.team === 'red' ? "🏆 VITÓRIA REAL!" : "GAME OVER!"); 
-        location.reload(); 
-    }
+    alvo.el.style.background = '#424242';
+    if(alvo.isKing) { alert(alvo.team === 'red' ? "🏆 VITÓRIA REAL!" : "GAME OVER!"); location.reload(); }
 }
 
-// Loop de Combate, Movimentação e Varredura de Alvos (~30 FPS)
+// Loop Principal de Física e Cálculo de Alvos (~30 FPS)
 setInterval(() => {
     let agora = Date.now();
 
-    // 1. Defesa Controlada das Torres
+    // Ataque das Torres estáticas
     for (let k in tDados) {
         let tor = tDados[k];
         if (tor.hp > 0 && tor.ativo && (agora - tor.lastHit >= tor.hitSpeed)) {
@@ -201,125 +184,52 @@ setInterval(() => {
                     if (d < menorDist) { menorDist = d; alvoTorre = t; }
                 }
             });
-            if (alvoTorre) { 
-                alvoTorre.hp -= tor.dmg; 
-                tor.lastHit = agora; 
-            }
-        }
-    }
-
-    // 2. Inteligência Artificial e Física das Tropas
-    tropas.forEach((tropa) => {
-        if (tropa.hp <= 0) return;
-        let alvo = null, menorDistancia = 9999;
-
-        if (tropa.targetType === 'tower') {
-            for (let k in tDados) {
-// =========================================================================
-// LOOP DE COMBATE, MOVIMENTAÇÃO E VARREDURA DE ALVOS (Roda suave a ~30 FPS)
-// =========================================================================
-setInterval(() => {
-    let agora = Date.now();
-
-    // 1. Defesa Controlada das Torres
-    for (let k in tDados) {
-        let tor = tDados[k];
-        if (tor.hp > 0 && tor.ativo && (agora - tor.lastHit >= tor.hitSpeed)) {
-            let alvoTorre = null, menorDist = tor.range;
-            tropas.forEach(t => {
-                if (t.team !== tor.team && t.hp > 0) {
-                    let d = Math.hypot(t.x - tor.x, t.y - tor.y);
-                    if (d < menorDist) { menorDist = d; alvoTorre = t; }
-                }
-            });
-            if (alvoTorre) { 
-                alvoTorre.hp -= tor.dmg; 
-                tor.lastHit = agora; 
-            }
-        }
-    }
-
-    // 2. Inteligência Artificial e Física das Tropas
-    tropas.forEach((tropa) => {
-        if (tropa.hp <= 0) return;
-        let alvo = null, menorDistancia = 9999;
-
-        // Se a tropa foca apenas em construções/torres (ex: Gigante, Corredor)
-        if (tropa.targetType === 'tower') {
-            for (let k in tDados) {
-                let tor = tDados[k];
-                if (tor.team !== tropa.team && tor.hp > 0) {
-                    let d = Math.hypot(tor.x - tropa.x, tor.y - tropa.y);
-                    if (d < menorDistancia) { 
-                        menorDistancia = d; 
-                        alvo = tor; 
-                    }
-                }
-            }
-        } else {
-            // Tropas comuns: focam primeiro em outras tropas inimigas
-            tropas.forEach(inimiga => {
-                if (inimiga.team !== tropa.team && inimiga.hp > 0) {
-                    let d = Math.hypot(inimiga.x - tropa.x, inimiga.y - tropa.y);
-                    if (d < menorDistancia) { 
-                        menorDistancia = d; 
-                        alvo = inimiga; 
-                    }
-                }
-            });
-            // Se não houver nenhuma tropa no mapa, avança contra as torres
-            if (!alvo) {
-                for (let k in tDados) {
-                    let tor = tDados[k];
-                    if (tor.team !== tropa.team && tor.hp > 0) {
-                        let d = Math.hypot(tor.x - tropa.x, tor.y - tropa.y);
-                        if (d < menorDistancia) { 
-                            menorDistancia = d; 
-                            alvo = tor; 
-                        }
-                    }
-                }
-            }
-        }
-
-        // Executa Aproximação ou Combate Corporal
+        // Execução de movimento ou ataque corporal
         if (alvo) {
-            if (menorDistancia <= tropa.range) {
-                // Se estiver no alcance de ataque, bate respeitando o tempo de recarga (hitSpeed)
-                if (agora - tropa.lastHit >= tropa.hitSpeed) {
-                    alvo.hp -= tropa.dmg;
-                    tropa.lastHit = agora;
+            if (menorDistancia <= t.range) {
+                // Se estiver no alcance, ataca respeitando o tempo de recarga (hitSpeed)
+                if (agora - t.lastHit >= t.hitSpeed) {
+                    alvo.hp -= t.dmg; 
+                    t.lastHit = agora;
                     
-                    // Se estiver batendo em uma torre, atualiza o visual dela na tela
+                    // Se o alvo for uma torre, atualiza o texto de vida na tela
                     if (alvo.type === 'tower') {
                         alvo.el.innerHTML = (alvo.isKing ? "👑" : "♜") + "<br>" + Math.max(0, Math.floor(alvo.hp));
                         
-                        // Se bater no Rei inimigo, ativa o modo de defesa dele
+                        // Ativa o Rei inimigo caso ele seja atingido
                         if(alvo.isKing) tDados[alvo.id.includes('red') ? 'red-king' : 'blue-king'].ativo = true;
                         
-                        // Se o HP da torre zerar, roda a função de destruição
+                        // Verifica se a torre caiu
                         if (alvo.hp <= 0) verificarDestruicaoTorre(alvo);
                     }
                 }
-            } else {
-                // Se estiver longe do alvo, calcula o ângulo vetorial e caminha até ele
-                let angulo = Math.atan2(alvo.y - tropa.y, alvo.x - tropa.x);
-                tropa.x += Math.cos(angulo) * tropa.speed;
-                tropa.y += Math.sin(angulo) * tropa.speed;
-                tropa.el.style.left = tropa.x + 'px';
-                tropa.el.style.top = tropa.y + 'px';
+            } else if (t.speed > 0) {
+                // Se estiver longe e puder andar (speed > 0), calcula o caminho vetorial
+                let angulo = Math.atan2(alvo.y - t.y, alvo.x - t.x);
+                t.x += Math.cos(angulo) * t.speed; 
+                t.y += Math.sin(angulo) * t.speed;
+                
+                // Atualiza a posição visual no mapa da arena
+                t.el.style.left = t.x + 'px'; 
+                t.el.style.top = t.y + 'px';
             }
         }
     });
 
-    // 3. Coleta de lixo e remoção de tropas com HP zerado (Garante ótima performance)
+    // 3. Coleta de lixo e remoção de entidades mortas (Garante alta performance)
     for (let i = tropas.length - 1; i >= 0; i--) {
         if (tropas[i].hp <= 0) {
+            // Se o Campeão Azul morrer, libera a variável para permitir que ele seja jogado de novo
+            if (tropas[i].cat === 'campeao' && tropas[i].team === 'blue') {
+                campeaoEmCampo = false; 
+            }
+            // Remove o elemento do HTML
             if (tropas[i].el) tropas[i].el.remove();
+            // Remove do array lógico do jogo
             tropas.splice(i, 1);
         }
     }
-}, 33); // Fecha corretamente o setInterval do Loop principal
+}, 33); // Fecha corretamente o setInterval do Loop principal a ~30 FPS
 
-// Executa a carga inicial do deck de cartas assim que a página abre
+// Sorteia e renderiza as 4 cartas iniciais do jogador na abertura da página
 inicializarMao();
