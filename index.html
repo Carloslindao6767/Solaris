@@ -4,262 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash Royale Pro Edition</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; background: #1a1a1a; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; color: white; }
-        #arena { 
-            position: relative; width: 360px; height: 460px; background-color: #4caf50;
-            background-image: linear-gradient(45deg, #43a047 25%, transparent 25%), linear-gradient(-45deg, #43a047 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #43a047 75%), linear-gradient(-45deg, transparent 75%, #43a047 75%);
-            background-size: 30px 30px; background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
-            border: 4px solid #333; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
-        }
-        #river { position: absolute; top: 215px; left: 0; width: 100%; height: 30px; background: #2196f3; display: flex; justify-content: space-around; z-index: 2; }
-        .bridge { width: 50px; height: 100%; background: #9e9e9e; border-left: 2px solid #555; border-right: 2px solid #555; }
-        .tower { position: absolute; width: 44px; height: 44px; border-radius: 6px; border: 3px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; text-shadow: 1px 1px #000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 3; line-height: 1.1; }
-        .king-tower { width: 56px; height: 56px; border-radius: 50%; font-size: 11px; }
-        .blue-team { background: #03a9f4; border-color: #b3e5fc; }
-        .red-team { background: #f44336; border-color: #ffcdd2; }
-        .troop { position: absolute; width: 24px; height: 24px; border-radius: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 13px; z-index: 5; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .troop.blue-team { background: #0288d1; }
-        .troop.red-team { background: #d32f2f; }
-        .building { position: absolute; width: 34px; height: 34px; border-radius: 4px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 4; border: 2px dashed white; }
-        #ui { width: 360px; background: #2d2d2d; padding: 10px; border-radius: 0 0 8px 8px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        #elixir-bar-container { width: 100%; height: 14px; background: #444; border-radius: 7px; overflow: hidden; border: 1px solid #555; }
-        #elixir-bar { width: 0%; height: 100%; background: #e91e63; transition: width 0.2s linear; }
-        #elixir-text { font-size: 13px; font-weight: bold; text-align: center; color: #ff69b4; text-shadow: 1px 1px #000; }
-        #deck { display: flex; justify-content: space-between; gap: 3px; }
-        .card { background: #3a3a3a; border: 2px solid #555; padding: 5px 1px; border-radius: 6px; cursor: pointer; text-align: center; font-size: 9px; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; font-weight: bold; }
-        .card .card-img { font-size: 16px; }
-        .card.active { border-color: #e91e63; background: #555; transform: scale(1.04); }
-    </style>
+    <!-- Vincula o arquivo de estilos externo -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h3 style="margin: 5px 0; letter-spacing: 1px;">CLASH ROYALE PRO</h3>
+    <h3 class="game-title">CLASH ROYALE PRO</h3>
+    
     <div id="arena">
-        <div id="river"><div class="bridge"></div><div class="bridge"></div></div>
+        <div id="river">
+            <div class="bridge"></div>
+            <div class="bridge"></div>
+        </div>
+        <!-- Torres do Time Vermelho (Inimigo) -->
         <div class="tower red-team king-tower" id="tower-red-king" style="top: 8px; left: 152px;">👑<br>3000</div>
         <div class="tower red-team" id="tower-red-left" style="top: 38px; left: 54px;">♜<br>1500</div>
         <div class="tower red-team" id="tower-red-right" style="top: 38px; left: 262px;">♜<br>1500</div>
+        
+        <!-- Torres do Time Azul (Jogador) -->
         <div class="tower blue-team king-tower" id="tower-blue-king" style="bottom: 8px; left: 152px;">👑<br>3000</div>
         <div class="tower blue-team" id="tower-blue-left" style="bottom: 38px; left: 54px;">♜<br>1500</div>
         <div class="tower blue-team" id="tower-blue-right" style="bottom: 38px; left: 262px;">♜<br>1500</div>
     </div>
+    
+    <!-- Interface de Usuário (Painel de Elixir e Deck) -->
     <div id="ui">
         <div id="elixir-text">Elixir: 0 / 10</div>
-        <div id="elixir-bar-container"><div id="elixir-bar"></div></div>
+        <div id="elixir-bar-container">
+            <div id="elixir-bar"></div>
+        </div>
         <div id="deck"></div>
     </div>
-    <script>
-        const arena = document.getElementById('arena');
-        let elixir = 0, selectedCard = null, selectedCost = 0, selectedSlot = null, tropas = [], construcoes = [];
-        
-        const tDados = {
-            'red-king': {id: 'red-king', x: 180, y: 36, hp: 3000, maxHp: 3000, team: 'red', type:'tower', isKing: true, ativo: false, dmg: 85, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-red-king')},
-            'red-left': {id: 'red-left', x: 76, y: 60, hp: 1500, maxHp: 1500, team: 'red', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-red-left')},
-            'red-right': {id: 'red-right', x: 284, y: 60, hp: 1500, maxHp: 1500, team: 'red', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-red-right')},
-            'blue-king': {id: 'blue-king', x: 180, y: 424, hp: 3000, maxHp: 3000, team: 'blue', type:'tower', isKing: true, ativo: false, dmg: 85, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-blue-king')},
-            'blue-left': {id: 'blue-left', x: 76, y: 400, hp: 1500, maxHp: 1500, team: 'blue', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-blue-left')},
-            'blue-right': {id: 'blue-right', x: 284, y: 400, hp: 1500, maxHp: 1500, team: 'blue', type:'tower', isKing: false, ativo: true, dmg: 55, hitSpeed: 2000, lastHit: 0, el: document.getElementById('tower-blue-right')}
-        };
 
-        const todasCartas = [
-            { id: 'larrys', nome: 'Larrys', custo: 1, img: '💀' },
-            { id: 'skelton_army', nome: 'Exército', custo: 3, img: '☠️' },
-            { id: 'tornado', nome: 'Tornado', custo: 3, img: '🌪️' },
-            { id: 'knight', nome: 'Cavaleiro', custo: 3, img: '⚔️' },
-            { id: 'mini_pekka', nome: 'M. PEKKA', custo: 4, img: '🥞' },
-            { id: 'fireball', nome: 'Fogo', custo: 4, img: '🔥' },
-            { id: 'hog', nome: 'Corredor', custo: 4, img: '🐷' },
-            { id: 'giant', nome: 'Gigante', custo: 5, img: '🛡️' }
-        ];
-        let maoCartas = [];
-
-        function inicializarMao() {
-            let embaralhado = [...todasCartas].sort(() => 0.5 - Math.random());
-            maoCartas = embaralhado.slice(0, 4);
-            renderizarDeck();
-        }
-        function renderizarDeck() {
-            const deckDiv = document.getElementById('deck'); deckDiv.innerHTML = '';
-            maoCartas.forEach((carta, index) => {
-                const cardEl = document.createElement('div'); cardEl.className = 'card';
-                cardEl.onclick = () => selectCard(carta, index, cardEl);
-                cardEl.innerHTML = `<span class="card-img">${carta.img}</span>${carta.nome}<br>💧${carta.custo}`;
-                deckDiv.appendChild(cardEl);
-            });
-        }
-        setInterval(() => {
-            if (elixir < 10) {
-                elixir += 1;
-                document.getElementById('elixir-bar').style.width = (elixir * 10) + '%';
-                document.getElementById('elixir-text').innerText = `Elixir: ${elixir} / 10`;
-            }
-        }, 900);
-        function selectCard(carta, slotIndex, element) {
-            if (elixir < carta.custo) return;
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            selectedCard = carta.id; selectedCost = carta.custo; selectedSlot = slotIndex; element.classList.add('active');
-        }
-        function rotacionarCarta(slot) {
-            let cartasForaDaMao = todasCartas.filter(c => !maoCartas.includes(c));
-            maoCartas[slot] = cartasForaDaMao[Math.floor(Math.random() * cartasForaDaMao.length)];
-            renderizarDeck();
-        }
-        arena.addEventListener('click', (e) => {
-            if (!selectedCard || elixir < selectedCost) return;
-            const rect = arena.getBoundingClientRect();
-            const x = e.clientX - rect.left, y = e.clientY - rect.top;
-            if (selectedCard !== 'fireball' && selectedCard !== 'tornado' && y < 230) return;
-
-            if (selectedCard === 'fireball') { executarBolaDeFogo(x, y); }
-            else if (selectedCard === 'tornado') { executarTornado(x, y); }
-            else if (selectedCard === 'larrys') {
-                for(let i=0; i<3; i++) criarTropa('larrys', x + (i*12 - 12), y + (Math.random()*10 - 5), 'blue');
-            }
-            else if (selectedCard === 'skelton_army') {
-                for(let i=0; i<11; i++) {
-                    let ox = (i % 4) * 10 - 15, oy = Math.floor(i / 4) * 10 - 15;
-                    criarTropa('larrys', x + ox, y + oy, 'blue');
-                }
-            } else { criarTropa(selectedCard, x, y, 'blue'); }
-            
-            elixir -= selectedCost; selectedCard = null; rotacionarCarta(selectedSlot);
-        });
-
-        function executarBolaDeFogo(targetX, targetY) {
-            const fx = document.createElement('div');
-            fx.style.position = 'absolute'; fx.style.width = '60px'; fx.style.height = '60px';
-            fx.style.background = 'radial-gradient(circle, #ff5722 20%, transparent 70%)';
-            fx.style.left = targetX + 'px'; fx.style.top = targetY + 'px'; fx.style.transform = 'translate(-50%, -50%)'; fx.style.zIndex = '10';
-            arena.appendChild(fx); setTimeout(() => { fx.remove(); }, 400);
-            
-            tropas.forEach(t => { if (t.team === 'red' && Math.hypot(t.x - targetX, t.y - targetY) < 45) t.hp -= 150; });
-            for (let k in tDados) {
-                let tor = tDados[k];
-                if (tor.team === 'red' && Math.hypot(tor.x - targetX, tor.y - targetY) < 45) {
-                    tor.hp -= 100; tor.el.innerHTML = (tor.isKing?"👑":"♜")+"<br>"+Math.max(0, Math.floor(tor.hp));
-                    if(tor.isKing) tor.ativo = true; if(tor.hp <= 0) verificarDestruicaoTorre(tor);
-                }
-            }
-        }
-
-        function executarTornado(targetX, targetY) {
-            const tnd = document.createElement('div');
-            tnd.style.position = 'absolute'; tnd.style.width = '90px'; tnd.style.height = '90px';
-            tnd.style.background = 'radial-gradient(circle, rgba(173,216,230,0.5) 10%, transparent 60%)';
-            tnd.style.border = '2px dashed rgba(255,255,255,0.3)'; tnd.style.borderRadius = '50%';
-            tnd.style.left = targetX + 'px'; tnd.style.top = targetY + 'px'; tnd.style.transform = 'translate(-50%, -50%)'; tnd.style.zIndex = '9';
-            arena.appendChild(tnd);
-
-            let duracao = 20;
-            let intervaloTornado = setInterval(() => {
-                tropas.forEach(t => {
-                    if (t.team === 'red') {
-                        let dist = Math.hypot(t.x - targetX, t.y - targetY);
-                        if (dist < 55) {
-                            let angle = Math.atan2(targetY - t.y, targetX - t.x);
-                            t.x += Math.cos(angle) * 3.5; t.y += Math.sin(angle) * 3.5; t.hp -= 1.5;
-                        }
-                    }
-                });
-                duracao--; if(duracao <= 0) { clearInterval(intervaloTornado); tnd.remove(); }
-            }, 100);
-        }
-
-        function criarTropa(type, x, y, team) {
-            const htmlEl = document.createElement('div'); htmlEl.className = `troop ${team}-team`;
-            htmlEl.style.left = x + 'px'; htmlEl.style.top = y + 'px';
-            
-            // Atributos +30% de vida e sistema de Velocidade de Ataque (hitSpeed em milissegundos)
-            let hp = 50, dmg = 15, speed = 2, range = 15, targetType = 'any', movimento = 'ground', hitSpeed = 2000;
-            
-            if(type === 'larrys') { hp = 13; dmg = 8; speed = 2.4; range = 15; hitSpeed = 1000; htmlEl.innerText = '💀'; }
-            if(type === 'knight') { hp = 110; dmg = 25; speed = 1.6; range = 15; hitSpeed = 1500; htmlEl.innerText = '⚔️'; }
-            if(type === 'mini_pekka') { hp = 135; dmg = 400; speed = 1.4; range = 15; hitSpeed = 3000; htmlEl.innerText = '🥞'; }
-            if(type === 'hog') { hp = 143; dmg = 110; speed = 3.2; range = 15; targetType = 'tower'; movimento = 'jump'; hitSpeed = 1800; htmlEl.innerText = '🐷'; }
-            if(type === 'giant') { hp = 312; dmg = 200; speed = 0.9; range = 15; targetType = 'tower'; hitSpeed = 3500; htmlEl.innerText = '🛡️'; }
-
-            arena.appendChild(htmlEl);
-            tropas.push({ x, y, team, type, hp, dmg, speed, range, targetType, movimento, hitSpeed, lastHit: 0, el: htmlEl });
-        }
-
-        setInterval(() => {
-            const tipos = ['knight', 'giant', 'hog', 'larrys', 'mini_pekka', 'skelton_army'];
-            let t = tipos[Math.floor(Math.random() * tipos.length)];
-            let rx = Math.random() * 240 + 60;
-            if(t === 'larrys') {
-                for(let i=0; i<3; i++) criarTropa('larrys', rx + (i*10), Math.random() * 40 + 40, 'red');
-            } else if(t === 'skelton_army') {
-                for(let i=0; i<11; i++) criarTropa('larrys', rx + (i%4)*8, Math.random() * 40 + 40 + Math.floor(i/4)*8, 'red');
-            } else { criarTropa(t, rx, Math.random() * 40 + 40, 'red'); }
-        }, 4200);
-
-        function verificarDestruicaoTorre(alvo) {
-            alvo.el.style.background = '#555';
-            if(alvo.isKing) { alert(alvo.team === 'red' ? "🏆 VITÓRIA REAL!" : "GAME OVER!"); location.reload(); }
-        }
-
-        // Loop de Combate e Atualização em Tempo Real
-        setInterval(() => {
-            let agora = Date.now();
-
-            // Disparo Controlado das Torres (Cada 2 segundos)
-            for (let k in tDados) {
-                let tor = tDados[k];
-                if (tor.hp > 0 && tor.ativo && (agora - tor.lastHit >= tor.hitSpeed)) {
-                    let alvoTorre = null, menorDist = tor.range;
-                    tropas.forEach(t => {
-                        if (t.team !== tor.team && t.hp > 0) {
-                            let d = Math.hypot(t.x - tor.x, t.y - tor.y);
-                            if (d < menorDist) { menorDist = d; alvoTorre = t; }
-                        }
-                    });
-                    if (alvoTorre) { alvoTorre.hp -= tor.dmg; tor.lastHit = agora; }
-                }
-            }
-
-            // Movimentação e Cadência de Ataque das Tropas
-            tropas.forEach((tropa) => {
-                if (tropa.hp <= 0) return;
-                let alvo = null, menorDistancia = 9999, alvosPossiveis = [];
-
-                for (let k in tDados) { if (tDados[k].team !== tropa.team && tDados[k].hp > 0) alvosPossiveis.push(tDados[k]); }
-                if (tropa.targetType !== 'tower') { tropas.forEach(t => { if(t.team !== tropa.team && t.hp > 0) alvosPossiveis.push(t); }); }
-
-                alvosPossiveis.forEach(a => {
-                    let d = Math.hypot(a.x - tropa.x, a.y - tropa.y);
-                    if (d < menorDistancia) { menorDistancia = d; alvo = a; }
-                });
-
-                if (alvo) {
-                    if (menorDistancia <= tropa.range) {
-                        // Ataque baseado no Cooldown individual de cada carta
-                        if (agora - tropa.lastHit >= tropa.hitSpeed) {
-                            alvo.hp -= tropa.dmg; tropa.lastHit = agora;
-                            if(alvo.type === 'tower') {
-                                alvo.el.innerHTML = (alvo.isKing?"👑":"♜")+"<br>"+Math.max(0, Math.floor(alvo.hp));
-                                if (alvo.isKing) { alvo.ativo = true; }
-                                if (alvo.hp <= 0) verificarDestruicaoTorre(alvo);
-                            }
-                        }
-                    } else {
-                        let destX = alvo.x, destY = alvo.y;
-                        if (tropa.movimento === 'ground') {
-                            let cruzouRio = (tropa.team === 'blue' && tropa.y < 215) || (tropa.team === 'red' && tropa.y > 245);
-                            if (!cruzouRio && Math.abs(tropa.y - 230) < 60) {
-                                destX = tropa.x < 180 ? 90 : 270; destY = tropa.team === 'blue' ? 200 : 260;
-                            }
-                        }
-                        let angle = Math.atan2(destY - tropa.y, destX - tropa.x);
-                        tropa.x += Math.cos(angle) * tropa.speed; tropa.y += Math.sin(angle) * tropa.speed;
-                        tropa.el.style.left = tropa.x + 'px'; tropa.el.style.top = tropa.y + 'px';
-                    }
-                }
-            });
-            tropas.forEach(t => { if(t.hp <= 0) t.el.remove(); });
-            tropas = tropas.filter(t => t.hp > 0);
-        }, 100);
-        inicializarMao();
-    </script>
+    <!-- Vincula o arquivo de lógica externa -->
+    <script src="script.js"></script>
 </body>
 </html>
